@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rand Signal · SA Fintech Brief · November 2026</title>
+<meta name="description" content="Five signals shaping South African payments and fintech, with sources, analysis and what to do. Sample issue, November 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0a1628; --navy2:#11233d; --ink:#0f1b2d; --muted:#5d6b80; --line:#e4e8ef;
+    --mint:#19d3a2; --mint-d:#0c9b76; --gold:#f5b942; --paper:#ffffff; --soft:#f4f7fb;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{margin:0;background:#dfe5ee;font-family:Inter,"Helvetica Neue",Arial,sans-serif;color:var(--ink);font-size:10.5pt;line-height:1.5;font-feature-settings:"tnum" 1}
+  a{color:var(--mint-d);text-decoration:none;border-bottom:1px solid rgba(12,155,118,.35)}
+  .page{width:210mm;min-height:297mm;margin:16px auto;background:var(--paper);position:relative;overflow:hidden;box-shadow:0 10px 40px rgba(10,22,40,.15);display:flex;flex-direction:column}
+  .pad{padding:13mm 16mm 6mm}
+  .runhead{display:flex;justify-content:space-between;align-items:center;font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:3mm;margin-bottom:4mm}
+  .runhead b{color:var(--ink)}
+  .foot{margin-top:auto;display:flex;justify-content:space-between;font-size:7.5pt;color:var(--muted);padding:0 16mm 8mm}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:.14em;font-size:10pt}
+  .logo i{display:inline-block;width:18px;height:18px;border-radius:5px;background:linear-gradient(135deg,var(--mint),#3aa0ff);position:relative}
+  .logo i:after{content:"";position:absolute;left:4px;right:4px;top:8px;height:2px;background:#0a1628;box-shadow:0 -4px 0 #0a1628,0 4px 0 #0a1628}
+
+  /* Cover */
+  .cover{background:radial-gradient(1200px 500px at 85% -10%,rgba(25,211,162,.22),transparent 60%),radial-gradient(800px 400px at -10% 110%,rgba(58,160,255,.18),transparent 60%),var(--navy);color:#fff}
+  .cover .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:12mm 12mm;pointer-events:none}
+  .cover .pad{position:relative;flex:1;display:flex;flex-direction:column}
+  .cover .top{display:flex;justify-content:space-between;align-items:center}
+  .pill{display:inline-block;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:3px 10px;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#c9d6e8}
+  .kicker{margin-top:22mm;color:var(--mint);font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:8.5pt}
+  .cover h1{font-size:30pt;line-height:1.08;margin:4mm 0 5mm;font-weight:800;letter-spacing:-.02em;max-width:165mm}
+  .cover h1 span{color:var(--mint)}
+  .cover .dek{font-size:12pt;color:#c9d6e8;max-width:150mm;margin:0}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;margin-top:14mm}
+  .kpi{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:4.5mm 4mm}
+  .kpi .v{font-size:19pt;font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1.1}
+  .kpi .v small{font-size:10pt;font-weight:600;color:#c9d6e8}
+  .kpi .l{font-size:8pt;color:#aebdd3;margin-top:2mm;line-height:1.35}
+  .kpi.accent{border-color:rgba(25,211,162,.55);background:rgba(25,211,162,.10)}
+  .toc{margin-top:12mm;display:grid;grid-template-columns:1fr 1fr;gap:2mm 8mm;counter-reset:t}
+  .toc div{display:flex;gap:3mm;align-items:baseline;font-size:9.5pt;color:#e3eaf5;border-top:1px solid rgba(255,255,255,.12);padding-top:2.5mm}
+  .toc div:before{counter-increment:t;content:"0" counter(t);color:var(--mint);font-weight:700;font-size:8.5pt}
+  .byline{margin-top:auto;display:grid;grid-template-columns:1.4fr 1fr;gap:6mm;border-top:1px solid rgba(255,255,255,.15);padding-top:6mm;font-size:8.5pt;color:#aebdd3}
+  .byline b{color:#fff;display:block;font-size:9.5pt;margin-bottom:1mm}
+  .cover .foot{color:#7f90aa}
+
+  /* Content */
+  h2.sec{font-size:8.5pt;letter-spacing:.16em;text-transform:uppercase;color:var(--mint-d);margin:0 0 3mm;font-weight:800}
+  .signal{display:grid;grid-template-columns:13mm 1fr;gap:4mm;padding:4mm 0;border-bottom:1px solid var(--line)}
+  .signal:last-child{border-bottom:0}
+  .num{font-size:20pt;font-weight:800;color:#c7d0dd;letter-spacing:-.03em;line-height:1}
+  .tags{display:flex;gap:2mm;margin-bottom:1.5mm}
+  .tag{font-size:7pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:1px 7px;border-radius:999px;background:var(--soft);color:var(--muted)}
+  .tag.reg{background:#e7f0ff;color:#1d4ed8}.tag.vol{background:#fff4dc;color:#a16207}.tag.fund{background:#e3f8f1;color:#0c7a5e}.tag.risk{background:#fde8e8;color:#b42318}
+  .signal h3{margin:0 0 1.5mm;font-size:12.5pt;line-height:1.25;letter-spacing:-.01em}
+  .signal p{margin:0 0 2mm}
+  .means{background:var(--soft);border-left:3px solid var(--mint);border-radius:0 8px 8px 0;padding:2mm 3.5mm;font-size:9.5pt}
+  .means b{color:var(--mint-d);text-transform:uppercase;letter-spacing:.08em;font-size:7.5pt;display:block;margin-bottom:.5mm}
+  .twocol{display:grid;grid-template-columns:1fr 62mm;gap:6mm;align-items:start}
+  .chart{border:1px solid var(--line);border-radius:10px;padding:4mm}
+  .chart h4{margin:0 0 1mm;font-size:9pt}
+  .chart .sub{font-size:7.5pt;color:var(--muted);margin-bottom:3mm}
+  .bar{margin-bottom:3mm}
+  .bar .lab{display:flex;justify-content:space-between;font-size:8pt;margin-bottom:1mm}
+  .bar .track{height:6mm;background:var(--soft);border-radius:4px;overflow:hidden}
+  .bar .fill{height:100%;border-radius:4px}
+  .chart .note{font-size:7pt;color:var(--muted);margin-top:2mm}
+  .stat{display:flex;align-items:baseline;gap:2mm;margin-top:3mm;padding-top:3mm;border-top:1px dashed var(--line)}
+  .stat .big{font-size:18pt;font-weight:800;color:var(--navy)}
+  .stat span{font-size:8pt;color:var(--muted)}
+
+  .todo{display:grid;grid-template-columns:1fr 1fr;gap:3mm}
+  .todo .c{border:1px solid var(--line);border-radius:10px;padding:3mm 4mm}
+  .todo .who{font-size:7.5pt;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:1mm}
+  .todo .c p{margin:0;font-size:9pt}
+  .disclaim{font-size:7.5pt;color:var(--muted);margin:0 0 3mm}
+
+  .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-top:2mm;position:relative}
+  .timeline:before{content:"";position:absolute;left:0;right:0;top:1.6mm;height:2px;background:linear-gradient(90deg,var(--mint),#3aa0ff)}
+  .ev{position:relative;padding-top:5.5mm}
+  .ev:before{content:"";position:absolute;left:0;top:0;width:3.2mm;height:3.2mm;border-radius:50%;background:#fff;border:2px solid var(--mint-d)}
+  .ev .d{font-weight:800;font-size:8.5pt;color:var(--navy)}
+  .ev .t{font-size:8.5pt;line-height:1.4}
+  .cta{margin-top:4mm;background:var(--navy);color:#fff;border-radius:12px;padding:5mm 6mm;display:grid;grid-template-columns:1.3fr 1fr;gap:6mm;align-items:center;position:relative;overflow:hidden}
+  .cta:after{content:"";position:absolute;right:-20mm;top:-20mm;width:60mm;height:60mm;border-radius:50%;background:radial-gradient(rgba(25,211,162,.35),transparent 70%)}
+  .cta h3{margin:0 0 1.5mm;font-size:13pt}
+  .cta p{margin:0;color:#c9d6e8;font-size:9pt}
+  .cta ul{margin:0;padding:0;list-style:none;font-size:8.5pt;color:#e3eaf5;position:relative;z-index:1}
+  .cta li{margin-bottom:1.2mm}
+  .cta li b{color:var(--mint)}
+  .about{font-size:7.5pt;color:var(--muted);margin:3mm 0 0}
+
+  .web-only{max-width:210mm;margin:0 auto;padding:10px 0 0;text-align:right;font-size:13px}
+  .web-only a{display:inline-block;background:var(--navy);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-weight:600}
+
+  @page{size:A4;margin:0}
+  @media print{
+    body{background:none}
+    .page{margin:0;box-shadow:none;height:297mm;page-break-after:always;break-after:page}
+    .web-only{display:none}
+  }
+  @media screen and (max-width:820px){
+    .page{width:auto;min-height:0;margin:0 0 10px;box-shadow:none}
+    .pad{padding:22px 18px}
+    .kpis,.toc,.byline,.twocol,.todo,.cta{grid-template-columns:1fr 1fr}
+    .twocol,.byline,.cta{grid-template-columns:1fr}
+    .cover h1{font-size:28px}
+    .foot{padding:0 18px 14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="web-only"><a href="rand-signal-brief-nov-2026.pdf" download>Download PDF</a></div>
+
+<!-- PAGE 1: COVER -->
+<section class="page cover">
+  <div class="grid-bg"></div>
+  <div class="pad">
+    <div class="top">
+      <div class="logo"><i></i>RAND SIGNAL</div>
+      <span class="pill">Sample issue · November 2026</span>
+    </div>
+
+    <div class="kicker">SA Fintech Brief</div>
+    <h1>Non-banks are about to get the keys to SA payments. <span>Capital is already moving.</span></h1>
+    <p class="dek">Five signals from South African payments and fintech this month, with the sources, what they mean, and what to do about them.</p>
+
+    <div class="kpis">
+      <div class="kpi accent"><div class="v">End Nov</div><div class="l">SARB target to publish the non-bank payments rulebook</div></div>
+      <div class="kpi"><div class="v">~60m<small>/mo</small></div><div class="l">PayShap transactions today vs a 500m/month target by 2029</div></div>
+      <div class="kpi"><div class="v">$100m</div><div class="l">Yoco's first debt facility, for merchant advances</div></div>
+      <div class="kpi"><div class="v">56%</div><div class="l">Share of consumer transactions still made in cash, by volume</div></div>
+    </div>
+
+    <div class="toc">
+      <div>Non-banks get direct access to payments from 2027</div>
+      <div>PayShap is big in rand, small in volume</div>
+      <div>Merchant lending moves onto fintech balance sheets</div>
+      <div>Cross-border B2B payments draw early capital</div>
+      <div>OPay's pulled IPO touches a South African bank</div>
+      <div>What to do · Watch next</div>
+    </div>
+
+    <div class="byline">
+      <div><b>Prepared by Nkosinathi Sidogi</b>Founder of Rand Signal. Azure Solutions Architect Expert (AZ-305), based in Johannesburg. Rand Signal tracks SA payments, fintech and regulation every week so teams don't have to read twenty sites.</div>
+      <div><b>How we work</b>Every fact links to its public source. Our analysis is labelled. Figures as reported on 19 November 2026.</div>
+    </div>
+  </div>
+  <div class="foot"><span>randsignal.za@gmail.com</span><span>nkosinathisid.github.io/randsignal</span></div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="page">
+  <div class="pad">
+    <div class="runhead"><span><b>Rand Signal</b> · SA Fintech Brief</span><span>November 2026</span></div>
+    <h2 class="sec">Five signals</h2>
+
+    <div class="signal">
+      <div class="num">01</div>
+      <div>
+        <div class="tags"><span class="tag reg">Regulation</span><span class="tag">SARB</span></div>
+        <h3>Non-banks get direct access to payments from 2027</h3>
+        <p>The SARB aims to publish its authorisation framework for non-bank payment providers by the end of November (<a href="https://www.timeslive.co.za/news/south-africa/2026-10-20-reserve-bank-pushes-digital-payments-to-cut-cash-use/">TimesLive</a>). Telcos, fintechs and retailers will be able to connect directly to clearing and settlement, with first participants expected around March 2027 and a mid-2027 launch (<a href="https://techcentral.co.za/banks-lose-grip-south-africa-payments-system/287396/">TechCentral</a>). New participants must meet obligations on governance, safeguarding customer funds, AML controls and ongoing supervision (<a href="https://techcentral.co.za/national-payment-system-bill-sarb-fintech/285597/">TechCentral</a>).</p>
+        <div class="means"><b>What it means</b>Bank sponsorship stops being the only way in. Expect fintech acquirers and wallets to start licensing work in Q1 2027, and banks to rethink sponsorship pricing.</div>
+      </div>
+    </div>
+
+    <div class="signal">
+      <div class="num">02</div>
+      <div class="twocol">
+        <div>
+          <div class="tags"><span class="tag vol">Volumes</span><span class="tag">PayShap</span></div>
+          <h3>PayShap is big in rand, small in volume</h3>
+          <p>PayShap has processed more than a billion transactions worth over R1 trillion since 2023 (<a href="https://www.ewn.co.za/2026/10/20/sarb-pushes-for-cheaper-more-inclusive-digital-payments-system">EWN</a>). But it handles about 60 million a month against a 2029 target of 500 million, while cash is still 56% of consumer transactions by volume and costs about R88.5 billion a year (<a href="https://techcentral.co.za/banks-lose-grip-south-africa-payments-system/287396/">TechCentral</a>). Reports differ on QR+ timing: November (TechCentral) or a pilot in Q1 2027 (EWN).</p>
+          <div class="means"><b>What it means</b>The SARB has an 8x volume gap to close and may push banks harder. Merchant QR and request-to-pay products sit in the path of that push.</div>
+        </div>
+        <div class="chart">
+          <h4>PayShap monthly volume</h4>
+          <div class="sub">Transactions per month, millions</div>
+          <div class="bar"><div class="lab"><span>Today</span><b>~60m</b></div><div class="track"><div class="fill" style="width:12%;background:var(--mint)"></div></div></div>
+          <div class="bar"><div class="lab"><span>2029 target</span><b>500m</b></div><div class="track"><div class="fill" style="width:100%;background:var(--navy)"></div></div></div>
+          <div class="stat"><div class="big">8x</div><span>gap to close in about three years</span></div>
+          <div class="stat"><div class="big">R88.5bn</div><span>yearly cost of cash</span></div>
+          <div class="note">Source: TechCentral, Oct 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="signal">
+      <div class="num">03</div>
+      <div>
+        <div class="tags"><span class="tag fund">Funding</span><span class="tag">SME credit</span></div>
+        <h3>Merchant lending moves onto fintech balance sheets</h3>
+        <p>Yoco secured a $100 million (about R1.6 billion) credit facility from US-based Victory Park Capital, its first move into the debt market (<a href="https://businesstech.co.za/news/business/883352/">BusinessTech</a>). It lets Yoco fund merchant advances in-house instead of through third parties (<a href="https://thepaypers.com/fintech/news/yoco-secures-usd-100-mln-credit-facility-from-victory-park-capital">The Paypers</a>). Advances range from R2,000 to R1.5 million, and Yoco serves about 200,000 merchants (BusinessTech).</p>
+        <div class="means"><b>What it means</b>Payment data is becoming the underwriting edge for SME credit. Bank SME desks now compete with acquirers who see daily sales.</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Rand Signal · randsignal.za@gmail.com</span><span>2 / 3</span></div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="page">
+  <div class="pad">
+    <div class="runhead"><span><b>Rand Signal</b> · SA Fintech Brief</span><span>November 2026</span></div>
+
+    <div class="signal">
+      <div class="num">04</div>
+      <div>
+        <div class="tags"><span class="tag fund">Funding</span><span class="tag">Cross-border</span></div>
+        <h3>Cross-border B2B payments draw early capital</h3>
+        <p>Cape Town's Lumepay disclosed a $6 million pre-seed round plus about $10 million in capital float for client liquidity (<a href="https://african-startups.com/news/funding/south-african-fintech-lumepay-raises-6-million-to-build-institutional-cross-border-payment-infrastructure-across-africa/">African Startups</a>).</p>
+        <div class="means"><b>What it means</b>A small round, but a pattern: SA-built rails for intra-African trade, an area the SARB also names as a priority.</div>
+      </div>
+    </div>
+
+    <div class="signal">
+      <div class="num">05</div>
+      <div>
+        <div class="tags"><span class="tag risk">Risk</span><span class="tag">Capital markets</span></div>
+        <h3>OPay's pulled IPO touches a South African bank</h3>
+        <p>Nigeria-focused OPay pulled its planned $304 million New York listing, citing an inquiry by an unnamed foreign regulator (<a href="https://techcentral.co.za/opay-pulls-new-york-listing/287882/">TechCentral</a>). Standard Bank was one of four underwriters and had agreed to buy up to $200 million of shares in a private placement (<a href="https://cioafrica.co/opay-pulls-304m-new-york-ipo-hours-after-pricing/">CIO Africa</a>).</p>
+        <div class="means"><b>What it means</b>Offshore listings for African fintechs carry regulatory tail risk. Watch whether the placement goes ahead on its own.</div>
+      </div>
+    </div>
+
+    <h2 class="sec" style="margin-top:4mm">What to do <span style="color:var(--muted);letter-spacing:.04em;text-transform:none;font-weight:500">· our recommendations, not facts from the sources</span></h2>
+    <div class="todo">
+      <div class="c"><div class="who">Fintech or wallet on a sponsor bank</div><p>Read the framework the week it lands, map which payment activities you need, and start a gap list for governance, customer funds and resilience.</p></div>
+      <div class="c"><div class="who">Bank: sponsorship or SME lending</div><p>Model revenue at risk if sponsored clients go direct in 2027. Benchmark your SME credit against acquirer-led advances.</p></div>
+      <div class="c"><div class="who">SME lender or acquirer</div><p>Price revenue-based advances against Yoco's new capacity. Test PayShap request-to-pay and QR at checkout.</p></div>
+      <div class="c"><div class="who">Investor</div><p>Track which fintechs file for authorisation first. Treat offshore-IPO plans as carrying regulator risk.</p></div>
+    </div>
+
+    <h2 class="sec" style="margin-top:4mm">Watch next</h2>
+    <div class="timeline">
+      <div class="ev"><div class="d">26 Nov · Cape Town</div><div class="t">SA FinTech Awards, hosted by Finasa and presented by PayInc (<a href="https://techcentral.co.za/finasa-sa-fintech-awards-2026-finalists/288270/">TechCentral, sponsored</a>)</div></div>
+      <div class="ev"><div class="d">By 30 Nov</div><div class="t">SARB authorisation framework and exemption rules for non-bank payment providers</div></div>
+      <div class="ev"><div class="d">Nov 2026 – Q1 2027</div><div class="t">QR+ standard rollout; reported dates differ</div></div>
+      <div class="ev"><div class="d">Mar 2027</div><div class="t">First authorised non-bank participants expected to go live</div></div>
+    </div>
+
+    <div class="cta">
+      <div>
+        <h3>Get this every Monday</h3>
+        <p>Five signals, what they mean, what to do, plus our live tracker of 16 SA payments and fintech rules.</p>
+      </div>
+      <ul>
+        <li><b>Professional</b> · R499/month</li>
+        <li><b>Team</b> · R1,499/month</li>
+        <li>Reply to this message, or email<br><b>randsignal.za@gmail.com</b></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Figures as reported on 19 Nov 2026. Not investment or legal advice. Rand Signal is a trading name of Nkosinathi Sidogi, Johannesburg.</span><span>3 / 3</span></div>
+</section>
+</body>
+</html>
