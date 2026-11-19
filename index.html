@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rand Signal</title>
+<meta name="description" content="Rand Signal: a weekly intelligence brief on South African fintech and payments. Regulation, funding and market moves, every fact sourced.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout idea: a ticker-style signal strip, then a narrow reading column with ruled sections, like a market note. */
+  --ink: #12211d;
+  --muted: #4f625c;
+  --paper: #f4f6f3;
+  --panel: #ffffff;
+  --rule: #d5ddd8;
+  --accent: #0d6b52;
+  --signal: #c98a00;
+  --accent-ink: #ffffff;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #e6ede9; --muted: #a3b5ae; --paper: #0e1714; --panel: #15211d;
+    --rule: #2a3a34; --accent: #3fbf95; --signal: #f0b429; --accent-ink: #06130f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ink: #e6ede9; --muted: #a3b5ae; --paper: #0e1714; --panel: #15211d;
+  --rule: #2a3a34; --accent: #3fbf95; --signal: #f0b429; --accent-ink: #06130f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 400 17px/1.6 var(--body); }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+header.top { border-bottom: 1px solid var(--rule); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; font: 800 20px/1 var(--display); letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
+.brand svg { flex: none; }
+nav { display: flex; gap: 18px; flex-wrap: wrap; font-size: 15px; }
+nav a { color: var(--muted); text-decoration: none; }
+nav a:hover { color: var(--ink); }
+.ticker { background: var(--ink); color: var(--paper); font: 500 13px/1 var(--mono); overflow-x: auto; }
+.ticker .wrap { display: flex; gap: 28px; padding-top: 11px; padding-bottom: 11px; white-space: nowrap; }
+.ticker b { color: var(--signal); font-weight: 500; }
+.hero { padding: 56px 0 40px; }
+.hero h1 { font: 800 clamp(34px, 6vw, 56px)/1.05 var(--display); letter-spacing: -0.02em; margin: 0 0 18px; max-width: 16ch; text-wrap: balance; }
+.hero p.lede { font-size: 20px; color: var(--muted); max-width: 58ch; margin: 0 0 28px; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-block; padding: 13px 20px; border-radius: 6px; font: 600 16px/1 var(--body); text-decoration: none; border: 2px solid var(--accent); cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--accent); }
+section { padding: 40px 0; border-top: 1px solid var(--rule); }
+section h2 { font: 700 26px/1.2 var(--display); margin: 0 0 8px; text-wrap: balance; }
+.kicker { font: 500 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--signal); margin: 0 0 12px; }
+.read { max-width: 65ch; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 20px; }
+.card h3 { font: 700 18px/1.3 var(--display); margin: 0 0 6px; }
+.card p { margin: 0; color: var(--muted); font-size: 15px; }
+.signal-list { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; }
+.signal-list li { display: grid; grid-template-columns: 88px 1fr; gap: 14px; align-items: baseline; padding: 12px 0; border-bottom: 1px dashed var(--rule); }
+.signal-list span.tag { font: 500 12px/1.4 var(--mono); text-transform: uppercase; color: var(--accent); }
+.price { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 20px; }
+.price .card.feature { border: 2px solid var(--accent); }
+.amount { font: 800 40px/1 var(--display); margin: 10px 0 4px; font-variant-numeric: tabular-nums; }
+.amount small { font: 500 15px/1 var(--body); color: var(--muted); }
+.card ul { margin: 14px 0 0; padding-left: 18px; color: var(--muted); font-size: 15px; }
+form { display: grid; gap: 14px; margin-top: 20px; max-width: 560px; }
+label { font-weight: 600; font-size: 15px; display: grid; gap: 6px; }
+input, select { font: 400 16px/1.4 var(--body); padding: 11px 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); color: var(--ink); }
+.check { display: grid; grid-template-columns: 22px 1fr; gap: 10px; font-weight: 400; align-items: start; }
+.check input { margin-top: 4px; width: 18px; height: 18px; }
+.note { font-size: 14px; color: var(--muted); }
+#formResult { display: none; background: var(--panel); border: 1px solid var(--accent); border-radius: 8px; padding: 16px; }
+#formResult.show { display: block; }
+#formResult code { font: 500 14px/1.5 var(--mono); word-break: break-all; }
+details { border-bottom: 1px solid var(--rule); padding: 14px 0; }
+details summary { font: 700 18px/1.3 var(--display); cursor: pointer; }
+details .read { margin-top: 10px; font-size: 15px; color: var(--muted); }
+details .read p, details .read li { margin: 0 0 8px; }
+footer { padding: 32px 0 48px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--muted); }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+@media (max-width: 480px) {
+  .signal-list li { grid-template-columns: 1fr; gap: 4px; }
+  .hero { padding-top: 36px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Rand Signal home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="16" width="5" height="10" rx="1" fill="var(--accent)"/><rect x="11.5" y="9" width="5" height="17" rx="1" fill="var(--accent)"/><rect x="21" y="2" width="5" height="24" rx="1" fill="var(--signal)"/></svg>
+      Rand Signal
+    </a>
+    <nav aria-label="Sections">
+      <a href="#what">What you get</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#subscribe">Subscribe</a>
+      <a href="#contact">Contact</a>
+      <a href="#policies">Policies</a>
+    </nav>
+  </div>
+</header>
+
+<div class="ticker" aria-label="Topics we track">
+  <div class="wrap">
+    <span><b>SARB</b> non-bank authorisation framework</span>
+    <span><b>PAYSHAP</b> volumes and adoption</span>
+    <span><b>FUNDING</b> SA fintech rounds and debt</span>
+    <span><b>BANKS</b> partnerships and launches</span>
+    <span><b>QR+</b> rollout</span>
+  </div>
+</div>
+
+<main id="top">
+  <div class="wrap hero">
+    <p class="kicker">Weekly intelligence brief · South Africa · from R499/month</p>
+    <h1>South African fintech and payments, in ten minutes a week.</h1>
+    <p class="lede">Rand Signal reads the regulators, the deal news and the bank announcements so you don't have to. Each Monday you get the five signals that matter, what they mean for your business, and a link to every source.</p>
+    <div class="cta">
+      <a class="btn primary" href="#subscribe">Subscribe</a>
+      <a class="btn ghost" href="https://claude.ai/artifact/JonWvsbzPiauLfsfSP7cvZ">Read a sample issue</a>
+    </div>
+  </div>
+
+  <section id="what">
+    <div class="wrap">
+      <p class="kicker">What you get</p>
+      <h2>One short brief, every Monday</h2>
+      <p class="read">Written for fintech founders, bank strategy and product teams, SME lenders and investors who need to know what changed in South African payments this week, without reading twenty sites.</p>
+      <div class="grid3">
+        <div class="card"><h3>Five signals</h3><p>Regulation, funding, launches and partnerships, each in a few sentences with the facts and the source links.</p></div>
+        <div class="card"><h3>What it means</h3><p>A clearly labelled line of analysis per signal, and a "what to do" table by reader type.</p></div>
+        <div class="card"><h3>Watch next</h3><p>Dated events coming up: rule publications, consultations, conferences and deadlines.</p></div>
+      </div>
+      <ul class="signal-list" aria-label="Examples from the November 2026 sample">
+        <li><span class="tag">Regulation</span><span>The SARB's planned authorisation framework that lets non-banks connect directly to the payment system.</span></li>
+        <li><span class="tag">Volumes</span><span>Where PayShap stands against the Reserve Bank's 2029 target, and what that means for merchants.</span></li>
+        <li><span class="tag">Funding</span><span>Debt and equity raised by SA fintechs, and what the money is for.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap">
+      <p class="kicker">Pricing · South African rand</p>
+      <h2>Simple monthly plans</h2>
+      <p class="read">Read the <a href="https://claude.ai/artifact/JonWvsbzPiauLfsfSP7cvZ">free sample issue</a> first. Plans renew monthly or yearly and you can cancel any time. Payments are handled securely by Paystack.</p>
+      <div class="price">
+        <div class="card feature">
+          <h3>Professional</h3>
+          <p class="amount">R499 <small>per month</small></p>
+          <p class="note">or R4,990 per year (two months free)</p>
+          <ul><li>Monday brief by email</li><li>Same-day alerts on regulation, funding and tenders</li><li>Every fact linked to its source</li><li>One reader</li></ul>
+        </div>
+        <div class="card">
+          <h3>Team</h3>
+          <p class="amount">R1,499 <small>per month</small></p>
+          <p class="note">or R14,990 per year</p>
+          <ul><li>Everything in Professional</li><li>Up to 5 readers at one company</li><li>Quarterly 30-minute briefing call</li><li>Invoice in your company's name</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="subscribe">
+    <div class="wrap">
+      <p class="kicker">Subscribe</p>
+      <h2>Start your subscription</h2>
+      <p class="read">Tell us who you are and which plan you want. We will email you a secure Paystack payment link, and your first brief arrives the Monday after payment. We only use these details to run your subscription.</p>
+      <form id="subForm" novalidate>
+        <label for="name">Name<input id="name" name="name" autocomplete="name" required></label>
+        <label for="email">Work email<input id="email" name="email" type="email" autocomplete="email" required></label>
+        <label for="company">Company (optional)<input id="company" name="company" autocomplete="organization"></label>
+        <label for="role">Role
+          <select id="role" name="role">
+            <option>Founder or executive</option>
+            <option>Strategy, product or partnerships</option>
+            <option>Risk, compliance or legal</option>
+            <option>Investor</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label for="plan">Plan
+          <select id="plan" name="plan">
+            <option>Professional, R499 per month</option>
+            <option>Professional, R4,990 per year</option>
+            <option>Team, R1,499 per month</option>
+            <option>Team, R14,990 per year</option>
+          </select>
+        </label>
+        <label class="check" for="consent"><input id="consent" type="checkbox" required><span>I agree to receive Rand Signal and related emails about my subscription. I can unsubscribe at any time.</span></label>
+        <button class="btn primary" type="submit">Request my payment link</button>
+        <p class="note" id="formError" role="alert"></p>
+      </form>
+      <div id="formResult" aria-live="polite">
+        <p><strong>Almost done.</strong> To confirm, email <code>randsignal.za@gmail.com</code> with the subject <code>Subscribe</code>, or use the button below. We reply within one business day with your Paystack payment link.</p>
+        <p><a class="btn ghost" id="mailLink" href="mailto:randsignal.za@gmail.com?subject=Subscribe">Open my email app</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap read">
+      <p class="kicker">Contact</p>
+      <h2>Talk to us</h2>
+      <p>Questions, corrections, or a story we should cover: email <a href="mailto:randsignal.za@gmail.com">randsignal.za@gmail.com</a> (randsignal.za@gmail.com). We reply within two business days.</p>
+      <p>Rand Signal is a trading name of Nkosinathi Sidogi, sole proprietor, Johannesburg, South Africa.</p>
+    </div>
+  </section>
+
+  <section id="policies">
+    <div class="wrap">
+      <p class="kicker">Policies</p>
+      <h2>Privacy, terms and refunds</h2>
+      <details>
+        <summary>Privacy notice (POPIA)</summary>
+        <div class="read">
+          <p><strong>Who we are.</strong> Rand Signal, a trading name of Nkosinathi Sidogi (sole proprietor), Johannesburg. Information Officer: Nkosinathi Sidogi, randsignal.za@gmail.com.</p>
+          <p><strong>What we collect.</strong> Your name, email address, and optionally your company and role, when you subscribe. If you buy a paid plan, Paystack processes your payment; we never see or store your card details.</p>
+          <p><strong>Why.</strong> Only to send you the brief you asked for, manage your subscription, and reply to you.</p>
+          <p><strong>Your rights.</strong> You can ask to see, correct or delete your information, or object to its use, by emailing us. Every email has an unsubscribe option. You may also complain to the Information Regulator of South Africa.</p>
+          <p><strong>Sharing.</strong> We do not sell or rent your information. We use service providers (such as our email provider and Paystack) only to run the service.</p>
+          <p><strong>Retention.</strong> We keep your details while you subscribe and delete them within 90 days after you unsubscribe, unless the law requires us to keep payment records longer.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Terms of service</summary>
+        <div class="read">
+          <p>Rand Signal provides market information and opinion for general information only. It is not investment, financial or legal advice. Facts come from the public sources linked in each issue and are correct as at the date of publication to the best of our knowledge; check the source before relying on any figure.</p>
+          <p>Paid plans renew monthly until cancelled. You may cancel at any time by emailing us; access continues until the end of the period you paid for. You may not resell or republish the brief in full without permission; sharing a link or a short quote with attribution is welcome.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Refund and cancellation policy</summary>
+        <div class="read">
+          <p>If you are not happy with your first paid month, email us within 7 days of payment for a full refund. After that, you can cancel any time and you will not be charged again; we do not refund partial months. Refunds go back to the original payment method through Paystack.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Rand Signal · Johannesburg, South Africa</span>
+    <span>Not investment or legal advice.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var form = document.getElementById('subForm');
+  var err = document.getElementById('formError');
+  var result = document.getElementById('formResult');
+  var mail = document.getElementById('mailLink');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var company = document.getElementById('company').value.trim();
+    var role = document.getElementById('role').value;
+    var plan = document.getElementById('plan').value;
+    var ok = document.getElementById('consent').checked;
+    if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Please enter your name and a valid email address.'; return; }
+    if (!ok) { err.textContent = 'Please tick the box to agree to receive the brief.'; return; }
+    err.textContent = '';
+    var body = 'Please send me a payment link for Rand Signal.\n\nPlan: ' + plan + '\nName: ' + name + '\nEmail: ' + email + '\nCompany: ' + (company || '-') + '\nRole: ' + role + '\n\nI agree to receive Rand Signal and related emails and can unsubscribe at any time.';
+    mail.href = 'mailto:randsignal.za@gmail.com?subject=' + encodeURIComponent('Subscribe') + '&body=' + encodeURIComponent(body);
+    result.classList.add('show');
+    result.scrollIntoView({ block: 'nearest' });
+  });
+})();
+</script>
+</body>
+</html>
