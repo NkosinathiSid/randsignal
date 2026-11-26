@@ -3,238 +3,335 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rand Signal</title>
-<meta name="description" content="Rand Signal: a weekly intelligence brief on South African fintech and payments. Regulation, funding and market moves, every fact sourced.">
+<title>Rand Signal · The future of South African payments, tracked</title>
+<meta name="description" content="Rand Signal tracks South African payments and fintech regulation: a live rule radar, an Authorisation Framework licence check, African data residency rules and a free weekly brief. Every fact sourced.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Rand Signal">
-<meta property="og:title" content="Rand Signal: South African fintech and payments, in ten minutes a week">
-<meta property="og:description" content="Regulation, deadlines and market moves, explained in plain language, with every fact sourced. Free live regulation tracker.">
+<meta property="og:title" content="Rand Signal: the future of South African payments, tracked">
+<meta property="og:description" content="Live rule radar, licence and capital check, African data rules and a free weekly brief. Every fact sourced.">
 <meta property="og:url" content="https://randsignal.co.za/">
 <meta property="og:image" content="https://randsignal.co.za/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://randsignal.co.za/og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect x='2' y='16' width='5' height='10' rx='1' fill='%233fbf95'/%3E%3Crect x='11.5' y='9' width='5' height='17' rx='1' fill='%233fbf95'/%3E%3Crect x='21' y='2' width='5' height='24' rx='1' fill='%23f0b429'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  /* Layout idea: a ticker-style signal strip, then a narrow reading column with ruled sections, like a market note. */
-  --ink: #12211d;
-  --muted: #4f625c;
-  --paper: #f4f6f3;
-  --panel: #ffffff;
-  --rule: #d5ddd8;
-  --accent: #0d6b52;
-  --signal: #c98a00;
-  --accent-ink: #ffffff;
-  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
-  --body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ink: #e6ede9; --muted: #a3b5ae; --paper: #0e1714; --panel: #15211d;
-    --rule: #2a3a34; --accent: #3fbf95; --signal: #f0b429; --accent-ink: #06130f;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --ink: #e6ede9; --muted: #a3b5ae; --paper: #0e1714; --panel: #15211d;
-  --rule: #2a3a34; --accent: #3fbf95; --signal: #f0b429; --accent-ink: #06130f;
-  color-scheme: dark;
-}
-* { box-sizing: border-box; }
-html, body { margin: 0; }
-body { background: var(--paper); color: var(--ink); font: 400 17px/1.6 var(--body); }
-a { color: var(--accent); text-underline-offset: 3px; }
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
-.wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
-header.top { border-bottom: 1px solid var(--rule); }
-header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap; }
-.brand { display: flex; align-items: center; gap: 10px; font: 800 20px/1 var(--display); letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
-.brand svg { flex: none; }
-nav { display: flex; gap: 18px; flex-wrap: wrap; font-size: 15px; }
-nav a { color: var(--muted); text-decoration: none; }
-nav a:hover { color: var(--ink); }
-.ticker { background: var(--ink); color: var(--paper); font: 500 13px/1 var(--mono); overflow-x: auto; }
-.ticker .wrap { display: flex; gap: 28px; padding-top: 11px; padding-bottom: 11px; white-space: nowrap; }
-.ticker b { color: var(--signal); font-weight: 500; }
-.hero { padding: 56px 0 40px; }
-.hero h1 { font: 800 clamp(34px, 6vw, 56px)/1.05 var(--display); letter-spacing: -0.02em; margin: 0 0 18px; max-width: 16ch; text-wrap: balance; }
-.hero p.lede { font-size: 20px; color: var(--muted); max-width: 58ch; margin: 0 0 28px; }
-.cta { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn { display: inline-block; padding: 13px 20px; border-radius: 6px; font: 600 16px/1 var(--body); text-decoration: none; border: 2px solid var(--accent); cursor: pointer; }
-.btn.primary { background: var(--accent); color: var(--accent-ink); }
-.btn.ghost { background: transparent; color: var(--accent); }
-section { padding: 40px 0; border-top: 1px solid var(--rule); }
-section h2 { font: 700 26px/1.2 var(--display); margin: 0 0 8px; text-wrap: balance; }
-.kicker { font: 500 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--signal); margin: 0 0 12px; }
-.read { max-width: 65ch; }
-.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
-.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 20px; }
-.card h3 { font: 700 18px/1.3 var(--display); margin: 0 0 6px; }
-.card p { margin: 0; color: var(--muted); font-size: 15px; }
-.signal-list { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; }
-.signal-list li { display: grid; grid-template-columns: 88px 1fr; gap: 14px; align-items: baseline; padding: 12px 0; border-bottom: 1px dashed var(--rule); }
-.signal-list span.tag { font: 500 12px/1.4 var(--mono); text-transform: uppercase; color: var(--accent); }
-.price { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 20px; }
-.price .card.feature { border: 2px solid var(--accent); }
-.amount { font: 800 40px/1 var(--display); margin: 10px 0 4px; font-variant-numeric: tabular-nums; }
-.amount small { font: 500 15px/1 var(--body); color: var(--muted); }
-.card ul { margin: 14px 0 0; padding-left: 18px; color: var(--muted); font-size: 15px; }
-form { display: grid; gap: 14px; margin-top: 20px; max-width: 560px; }
-label { font-weight: 600; font-size: 15px; display: grid; gap: 6px; }
-input, select { font: 400 16px/1.4 var(--body); padding: 11px 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); color: var(--ink); }
-.check { display: grid; grid-template-columns: 22px 1fr; gap: 10px; font-weight: 400; align-items: start; }
-.check input { margin-top: 4px; width: 18px; height: 18px; }
-.note { font-size: 14px; color: var(--muted); }
-#formResult { display: none; background: var(--panel); border: 1px solid var(--accent); border-radius: 8px; padding: 16px; }
-#formResult.show { display: block; }
-#formResult code { font: 500 14px/1.5 var(--mono); word-break: break-all; }
-details { border-bottom: 1px solid var(--rule); padding: 14px 0; }
-details summary { font: 700 18px/1.3 var(--display); cursor: pointer; }
-details .read { margin-top: 10px; font-size: 15px; color: var(--muted); }
-details .read p, details .read li { margin: 0 0 8px; }
-footer { padding: 32px 0 48px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--muted); }
-footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-@media (max-width: 480px) {
-  .signal-list li { grid-template-columns: 1fr; gap: 4px; }
-  .hero { padding-top: 36px; }
-}
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+:root{color-scheme:dark;--bg:#050b09;--bg2:#08130f;--panel:#0c1915;--panel2:#10211b;--line:#1d3a2f;--ink:#effaf5;--muted:#a4bdb2;--green:#3fbf95;--neon:#5ff5bd;--gold:#f0b429;--red:#ff7a6b;--blue:#7cb8ff;--mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;--disp:Archivo,"IBM Plex Sans",Arial,sans-serif}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",Arial,sans-serif;overflow-x:clip}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(800px 480px at 90% -5%,rgba(63,191,149,.16),transparent 60%),radial-gradient(600px 420px at -10% 40%,rgba(240,180,41,.07),transparent 60%),linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px) 0 0/100% 48px}
+a{color:var(--neon);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+h1,h2,h3{font-family:var(--disp);letter-spacing:-.02em;line-height:1.04;margin:0;text-wrap:balance}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(5vw,16px)}
+section{padding:clamp(48px,7vw,96px) 0}
+.kicker{font:500 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 14px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:18px;height:2px;background:var(--gold)}
+h2{font-size:clamp(32px,4.2vw,52px);margin-bottom:14px}
+.lede{color:var(--muted);font-size:18px;max-width:62ch;margin:0 0 28px}
+.note{font-size:14px;color:var(--muted)}
+header{position:sticky;top:0;z-index:20;background:rgba(5,11,9,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:10px 22px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.brand{display:flex;align-items:center;gap:10px;font:800 20px/1 var(--disp);color:var(--ink);text-decoration:none}
+nav{display:flex;gap:4px 20px;flex-wrap:wrap;align-items:center}
+nav a{color:var(--muted);text-decoration:none;font-size:15px;padding:10px 0}
+nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 20px;border-radius:999px;font:600 16px/1 "IBM Plex Sans",Arial,sans-serif;text-decoration:none;border:1px solid var(--line);color:var(--ink);background:var(--panel);cursor:pointer;transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.go{background:var(--neon);border-color:var(--neon);color:#03140d;box-shadow:0 0 30px rgba(95,245,189,.3)}
+nav .btn.go{color:#03140d;padding:0 16px;min-height:40px;font-size:15px}
+/* hero */
+.hero{position:relative;padding:clamp(40px,7vw,96px) 0 clamp(36px,5vw,64px);overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,4vw,56px);align-items:end}
+.hero h1{font-size:clamp(42px,6.4vw,84px);font-weight:800;margin-bottom:20px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--neon),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{color:#c3d8cf}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.board{background:rgba(12,25,21,.82);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.board .head{display:flex;justify-content:space-between;gap:10px;font:500 13px/1.3 var(--mono);color:var(--muted);margin-bottom:14px}
+.live{display:inline-flex;align-items:center;gap:7px;color:var(--neon)}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--neon);box-shadow:0 0 0 0 rgba(95,245,189,.6);animation:ping 1.6s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 8px rgba(95,245,189,0)}100%{box-shadow:0 0 0 0 rgba(95,245,189,0)}}
+.watch{border:1px solid rgba(240,180,41,.4);background:rgba(240,180,41,.07);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.watch b{display:block;font:700 17px/1.25 var(--disp)}
+.watch .big{font:800 44px/1 var(--disp);color:var(--gold);margin:8px 0 2px;font-variant-numeric:tabular-nums}
+.watch span{font-size:14px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kpi{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi b{display:block;font:800 28px/1 var(--disp);color:var(--neon);font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:var(--muted);line-height:1.3;display:block;margin-top:4px}
+.tick{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2);overflow:hidden;white-space:nowrap}
+.tick .row{display:inline-flex;gap:40px;padding:12px 0;animation:mq 60s linear infinite;font:500 14px/1 var(--mono);color:var(--muted)}
+.tick b{color:var(--neon);font-weight:500;margin-right:8px}
+.tick .d b{color:var(--gold)}
+@keyframes mq{to{transform:translateX(-50%)}}
+/* radar */
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.chip{min-height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font:500 15px/1 "IBM Plex Sans",Arial,sans-serif;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:#03140d;border-color:var(--ink)}
+.search{flex:1 1 220px;max-width:320px;min-height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:15px "IBM Plex Sans",Arial,sans-serif}
+.rules{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:12px}
+.rule{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:8px;align-content:start;transition:border-color .2s,transform .2s}
+.rule:hover{border-color:var(--green);transform:translateY(-2px)}
+.rule h3{font-size:19px;line-height:1.2}
+.rule .who{font-size:14px;color:var(--muted)}
+.st{justify-self:start;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid}
+.st.force{color:var(--neon);border-color:rgba(95,245,189,.5);background:rgba(95,245,189,.08)}
+.st.draft{color:var(--gold);border-color:rgba(240,180,41,.5);background:rgba(240,180,41,.08)}
+.st.consult{color:var(--blue);border-color:rgba(124,184,255,.5);background:rgba(124,184,255,.08)}
+.st.bill{color:#d7a8ff;border-color:rgba(215,168,255,.5);background:rgba(215,168,255,.08)}
+.rule .meta{font:500 13px/1.4 var(--mono);color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:8px;margin-top:2px}
+.empty{color:var(--muted)}
+/* licence */
+.lic{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(18px,3vw,36px);align-items:start}
+.acts{display:grid;gap:8px}
+.act{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;text-align:left;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font:15px/1.35 "IBM Plex Sans",Arial,sans-serif}
+.act b{display:block;font:600 16px/1.3 "IBM Plex Sans",Arial,sans-serif}
+.act small{color:var(--muted);font-size:13px}
+.act .code{font:500 13px/1 var(--mono);color:var(--gold);border:1px solid var(--line);border-radius:10px;height:44px;display:grid;place-items:center}
+.act[aria-pressed=true]{border-color:var(--neon);background:linear-gradient(135deg,rgba(95,245,189,.12),rgba(240,180,41,.06))}
+.out{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:clamp(18px,2.6vw,28px)}
+.out label{display:grid;gap:6px;font-weight:600;font-size:15px}
+.out .row{display:flex;justify-content:space-between;gap:10px}
+.out output{font:500 15px var(--mono);color:var(--neon);white-space:nowrap}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--gold))}
+input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--gold))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;margin-top:-8px;box-shadow:0 0 0 6px rgba(95,245,189,.2)}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:0}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px;margin:14px 0}
+.res div{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:14px}
+.res b{display:block;font:800 clamp(24px,2.8vw,32px)/1.1 var(--disp);font-variant-numeric:tabular-nums}
+.res span{font-size:13px;color:var(--muted)}
+.res .cap b{color:var(--gold)}
+.res .tier b{color:var(--neon)}
+.list{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.list li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:8px;font-size:15px}
+.list li::before{content:"›";color:var(--neon);font:600 18px/1.3 var(--mono)}
+.out h4{margin:16px 0 8px;font:600 14px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.flag{margin-top:14px;font-size:14px;color:var(--muted);border-left:3px solid var(--gold);padding-left:12px}
+/* africa */
+.spectrum{position:relative;margin:10px 0 18px;padding:46px 0 10px}
+.spectrum .bar{height:10px;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--gold),var(--red))}
+.spectrum .ends{display:flex;justify-content:space-between;font:500 13px var(--mono);color:var(--muted);margin-top:10px}
+.pin{position:absolute;top:0;transform:translateX(-50%);display:grid;justify-items:center;gap:4px;background:none;border:0;color:var(--ink);cursor:pointer;font:600 14px "IBM Plex Sans",Arial,sans-serif;padding:0;min-width:44px}
+.pin i{width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--ink);margin-top:2px}
+.pin[aria-pressed=true] i{border-color:var(--neon);box-shadow:0 0 0 6px rgba(95,245,189,.2)}
+.pin[aria-pressed=true]{color:var(--neon)}
+.country{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,2.6vw,28px)}
+.country h3{font-size:28px;margin-bottom:6px}
+.country p{margin:0 0 10px}
+.country dl{margin:0;display:grid;gap:10px}
+.country dt{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.country dd{margin:2px 0 0}
+.cloud{margin-top:14px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;border:1px dashed var(--line);border-radius:14px;padding:14px 16px}
+/* lessons */
+.cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.case{display:block;width:100%;perspective:1200px;min-height:390px;cursor:pointer;background:none;border:0;padding:0;text-align:left;color:var(--ink);font:inherit}
+.case .in{display:block;position:relative;height:100%;min-height:390px;transition:transform .6s;transform-style:preserve-3d}
+.case[aria-pressed=true] .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;overflow:auto;backface-visibility:hidden;border-radius:16px;border:1px solid var(--line);padding:20px;display:grid;align-content:space-between;gap:10px;background:var(--panel)}
+.face.back{transform:rotateY(180deg);background:linear-gradient(160deg,rgba(95,245,189,.12),var(--panel) 60%);border-color:rgba(95,245,189,.4)}
+.face .h3{display:block;font:700 22px/1.1 var(--disp)}
+.face .p{display:block}
+.face .yr{font:500 13px var(--mono);color:var(--gold)}
+.face .p{margin:0;font-size:15px;color:#cfe0d8}
+.face .flip{font:500 13px var(--mono);color:var(--muted)}
+/* brief */
+.brief{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:clamp(20px,4vw,56px);align-items:start}
+.feats{display:grid;gap:10px;margin:0 0 20px}
+.feat{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.feat b{display:block;font:700 17px/1.3 var(--disp)}
+.feat span{color:var(--muted);font-size:15px}
+form{display:grid;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,2.6vw,28px)}
+form label{display:grid;gap:6px;font-weight:600;font-size:15px}
+form input,form select{font:16px/1.4 "IBM Plex Sans",Arial,sans-serif;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);width:100%}
+form label.check{grid-template-columns:24px minmax(0,1fr);align-items:start;font-weight:400}
+form label.check input{width:20px;height:20px;margin-top:3px;padding:0}
+#formError{color:var(--red);margin:0;min-height:1.2em;font-size:14px}
+#formResult{display:none;border:1px solid var(--neon);border-radius:14px;padding:16px;background:rgba(95,245,189,.06)}
+#formResult.show{display:block}
+#formResult code{font:500 14px var(--mono);overflow-wrap:anywhere}
+details{border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:10px}
+summary{cursor:pointer;padding:16px 18px;font-weight:600}
+details .read{padding:0 18px 12px;color:#cfe0d8;max-width:75ch}
+details .read p{margin:0 0 10px}
+footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:900px){.hero .wrap,.lic,.brief,.country{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){nav .hide{display:none}.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.kpi b{font-size:22px}.pin{font-size:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<header class="top">
+<header>
   <div class="wrap">
     <a class="brand" href="#top" aria-label="Rand Signal home">
-      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="16" width="5" height="10" rx="1" fill="var(--accent)"/><rect x="11.5" y="9" width="5" height="17" rx="1" fill="var(--accent)"/><rect x="21" y="2" width="5" height="24" rx="1" fill="var(--signal)"/></svg>
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="16" width="5" height="10" rx="1" fill="#3fbf95"/><rect x="11.5" y="9" width="5" height="17" rx="1" fill="#3fbf95"/><rect x="21" y="2" width="5" height="24" rx="1" fill="#f0b429"/></svg>
       Rand Signal
     </a>
     <nav aria-label="Sections">
-      <a href="#what">What you get</a>
-      <a href="#tracker">Tracker</a>
-      <a href="#expand">Expand</a>
-      <a href="#subscribe">Get it free</a>
-      <a href="#contact">Contact</a>
-      <a href="#policies">Policies</a>
+      <a href="#radar">Rule radar</a>
+      <a class="hide" href="#licence">Licence check</a>
+      <a class="hide" href="#africa">Africa</a>
+      <a class="hide" href="#lessons">Lessons</a>
+      <a class="btn go" href="#brief">Get the brief</a>
     </nav>
   </div>
 </header>
 
-<div class="ticker" aria-label="Topics we track">
-  <div class="wrap">
-    <span><b>SARB</b> non-bank authorisation framework</span>
-    <span><b>PAYSHAP</b> volumes and adoption</span>
-    <span><b>FUNDING</b> SA fintech rounds and debt</span>
-    <span><b>BANKS</b> partnerships and launches</span>
-    <span><b>QR+</b> rollout</span>
-  </div>
-</div>
-
 <main id="top">
-  <div class="wrap hero">
-    <p class="kicker">Weekly intelligence brief · South Africa · Free</p>
-    <h1>South African fintech and payments, in ten minutes a week.</h1>
-    <p class="lede">Rand Signal reads the regulators, the deal news and the bank announcements so you don't have to. Each Monday you get the five signals that matter, what they mean for your business, and a link to every source.</p>
-    <div class="cta">
-      <a class="btn primary" href="#subscribe">Get the brief free</a>
-      <a class="btn ghost" href="brief/">Read a sample issue</a>
-    </div>
-  </div>
-
-  <section id="what">
+  <section class="hero" aria-labelledby="h1">
+    <canvas id="rails" aria-hidden="true"></canvas>
     <div class="wrap">
-      <p class="kicker">What you get</p>
-      <h2>One short brief, every Monday</h2>
-      <p class="read">Written for fintech founders, bank strategy and product teams, SME lenders and investors who need to know what changed in South African payments this week, without reading twenty sites.</p>
-      <div class="grid3">
-        <div class="card"><h3>Five signals</h3><p>Regulation, funding, launches and partnerships, each in a few sentences with the facts and the source links.</p></div>
-        <div class="card"><h3>What it means</h3><p>A clearly labelled line of analysis per signal, and a "what to do" table by reader type.</p></div>
-        <div class="card"><h3>Watch next</h3><p>Dated events coming up: rule publications, consultations, conferences and deadlines.</p></div>
+      <div>
+        <p class="kicker">South African payments · regulation · tracked weekly</p>
+        <h1 id="h1">The payment rails are opening. <em>Know the rules first.</em></h1>
+        <p class="lede">South Africa is preparing to let non-banks plug straight into the national payment system. Rand Signal tracks every rule that shapes it, explains it in plain language and links the official source, so fintechs, banks and investors can move early.</p>
+        <div class="btns">
+          <a class="btn go" href="#licence">Check your licence and capital</a>
+          <a class="btn" href="#brief">Get the free weekly brief</a>
+        </div>
       </div>
-      <ul class="signal-list" aria-label="Examples from the November 2026 sample">
-        <li><span class="tag">Regulation</span><span>The SARB's planned authorisation framework that lets non-banks connect directly to the payment system.</span></li>
-        <li><span class="tag">Volumes</span><span>Where PayShap stands against the Reserve Bank's 2029 target, and what that means for merchants.</span></li>
-        <li><span class="tag">Funding</span><span>Debt and equity raised by SA fintechs, and what the money is for.</span></li>
-      </ul>
+      <aside class="board" aria-label="Signal board">
+        <div class="head"><span>SIGNAL BOARD</span><span class="live"><i></i>updated 26 Nov 2026</span></div>
+        <div class="watch">
+          <b>Final SARB Authorisation Framework</b>
+          <div class="big" id="cd">…</div>
+          <span id="cdNote">to the SARB's end-November target. Still a draft (third version, May 2026); no final text published yet.</span>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><b data-count="20">0</b><span>rules on the radar</span></div>
+          <div class="kpi"><b data-count="5">0</b><span>African markets' data rules</span></div>
+          <div class="kpi"><b data-count="9">0</b><span>payment activities in the draft</span></div>
+        </div>
+      </aside>
     </div>
   </section>
 
-  <section id="tracker">
+  <div class="tick" aria-hidden="true"><div class="row" id="tick"></div></div>
+
+  <section id="radar">
     <div class="wrap">
-      <p class="kicker">Free with the brief</p>
-      <h2>Live regulation tracker</h2>
-      <p class="read">Sixteen SA payments, fintech and crypto rules in one place: status, next date, who is affected, what to do and the source. Updated as things move. Here are the next known dates; readers of the brief get the full tracker.</p>
-      <ul class="signal-list" aria-label="Next known regulatory dates">
-        <li><span class="tag">End Nov 2026</span><span>SARB aims to publish the final Authorisation Framework for non-bank payment activities.</span></li>
-        <li><span class="tag">Nov 2026 – Q1 2027</span><span>QR+ interoperable payment code: reports differ on whether it lands in November or as a pilot early next year.</span></li>
-        <li><span class="tag">Jan 2027</span><span>White-label ATM pilot launches.</span></li>
-        <li><span class="tag">Mar 2027</span><span>First authorised non-bank payment participants expected to go live; national cash utility due.</span></li>
-        <li><span class="tag">Mid-2027</span><span>Wider opening of the payment system to non-banks.</span></li>
-      </ul>
-      <p class="read" style="font-size:13px">Dates are from public reports and can change. Not legal advice.</p>
+      <p class="kicker">Rule radar</p>
+      <h2>Every rule that moves SA payments, in one place</h2>
+      <p class="lede">Status words are exact: in force, draft, consultation or bill. A draft is never called the law. Filter by status or search for a regulator or topic.</p>
+      <div class="tools">
+        <div class="chips" role="group" aria-label="Filter by status" id="filters" style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="chip" aria-pressed="true" data-f="all">All</button>
+          <button class="chip" aria-pressed="false" data-f="force">In force</button>
+          <button class="chip" aria-pressed="false" data-f="draft">Draft</button>
+          <button class="chip" aria-pressed="false" data-f="consult">Consultation</button>
+          <button class="chip" aria-pressed="false" data-f="bill">Bill or programme</button>
+        </div>
+        <label for="q" style="position:absolute;left:-9999px">Search rules</label>
+        <input class="search" id="q" type="search" placeholder="Search: cloud, crypto, FIC…">
+      </div>
+      <div class="rules" id="rules" aria-live="polite"></div>
+      <p class="note" style="margin-top:14px">As of 26 Nov 2026. Readiness information, not legal advice. Weekly brief readers get the source link and the "what to do now" for each rule.</p>
     </div>
   </section>
 
-  <section id="expand">
+  <section id="licence">
     <div class="wrap">
-      <p class="kicker">Expanding into Africa?</p>
-      <h2>Country entry profiles</h2>
-      <p class="read">For SA payments and fintech firms looking north: the regulator, which licence fits your product, how much capital, how long it takes, the routes others used to get in, and what is about to change. Read our <a href="kenya/">Kenya sample</a>, or ask for a profile of your target market.</p>
-    </div>
-  </section>
-
-  <section id="subscribe">
-    <div class="wrap">
-      <p class="kicker">Free while we launch</p>
-      <h2>Get the brief free</h2>
-      <p class="read">Rand Signal is free while we launch. No card, no payment, no catch. Tell us who you are and your first brief arrives on Monday. We only use these details to send you the brief.</p>
-      <form id="subForm" novalidate>
-        <label for="name">Name<input id="name" name="name" autocomplete="name" required></label>
-        <label for="email">Work email<input id="email" name="email" type="email" autocomplete="email" required></label>
-        <label for="company">Company (optional)<input id="company" name="company" autocomplete="organization"></label>
-        <label for="role">Role
-          <select id="role" name="role">
-            <option>Founder or executive</option>
-            <option>Strategy, product or partnerships</option>
-            <option>Risk, compliance or legal</option>
-            <option>Investor</option>
-            <option>Other</option>
-          </select>
-        </label>
-        <label class="check" for="consent"><input id="consent" type="checkbox" required><span>I agree to receive Rand Signal and related emails about it. I can unsubscribe at any time.</span></label>
-        <button class="btn primary" type="submit">Send me the brief</button>
-        <p class="note" id="formError" role="alert"></p>
-      </form>
-      <div id="formResult" aria-live="polite">
-        <p><strong>Almost done.</strong> To confirm, email <code>randsignal.za@gmail.com</code> with the subject <code>Subscribe</code>, or use the button below. We'll add you to the list and confirm by email.</p>
-        <p><a class="btn ghost" id="mailLink" href="mailto:randsignal.za@gmail.com?subject=Subscribe">Open my email app</a></p>
+      <p class="kicker">Licence check</p>
+      <h2>Which licence would you need, and how much capital?</h2>
+      <p class="lede">Based on the SARB's draft Authorisation Framework (third version, May 2026). Pick what your business does and set your average monthly value. The final text may change these numbers.</p>
+      <div class="lic">
+        <div class="acts" role="group" aria-label="Payment activity" id="acts"></div>
+        <div class="out" aria-live="polite">
+          <label for="vol" id="volWrap"><span class="row"><span id="volLabel">Average monthly value</span><output id="volO" for="vol"></output></span><input id="vol" type="range" min="0" max="100" step="1" value="40"></label>
+          <div class="res">
+            <div class="tier"><b id="rTier">-</b><span id="rTierN">tier</span></div>
+            <div class="cap"><b id="rCap">-</b><span>minimum capital (draft)</span></div>
+            <div><b id="rWhen" style="font-size:clamp(18px,2vw,22px)">-</b><span>when you'd apply</span></div>
+          </div>
+          <h4>What the draft asks</h4>
+          <ul class="list" id="rDo"></ul>
+          <p class="flag">Doing several activities? The highest capital figure applies. Readiness information from the draft, not legal advice. Confirm with the SARB or your lawyers before acting.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="contact">
-    <div class="wrap read">
-      <p class="kicker">Contact</p>
-      <h2>Talk to us</h2>
-      <p>Questions, corrections, or a story we should cover: email <a href="mailto:randsignal.za@gmail.com">randsignal.za@gmail.com</a>. We reply seven days a week, usually the same day.</p>
-      <p>Rand Signal is a trading name of Nkosinathi Sidogi, sole proprietor, Johannesburg, South Africa.</p>
+  <section id="africa">
+    <div class="wrap">
+      <p class="kicker">Expanding into Africa</p>
+      <h2>Where can your payment data live?</h2>
+      <p class="lede">Going north means meeting new data rules. Tap a market on the scale, from most open to strictest. "Offshore" includes South African data centres.</p>
+      <div class="spectrum" id="spec">
+        <div class="bar"></div>
+        <div class="ends"><span>More open</span><span>Must stay in-country</span></div>
+      </div>
+      <div class="country" id="cty" aria-live="polite"></div>
+      <p class="note" style="margin-top:14px">As of 24 Nov 2026. Read our <a href="kenya/">Kenya entry profile</a>, or ask us for a profile of your target market.</p>
     </div>
   </section>
 
-  <section id="policies">
+  <section id="lessons">
     <div class="wrap">
-      <p class="kicker">Policies</p>
-      <h2>Privacy and terms</h2>
+      <p class="kicker">Lessons from history</p>
+      <h2>Where customer money actually gets lost</h2>
+      <p class="lede">Rules exist because of failures like these. Tap a card for the lesson.</p>
+      <div class="cases" id="cases"></div>
+    </div>
+  </section>
+
+  <section id="brief">
+    <div class="wrap brief">
+      <div>
+        <p class="kicker">Free weekly brief</p>
+        <h2>Ten minutes every Monday</h2>
+        <p class="lede">Written for fintech founders, bank strategy and product teams, compliance people and investors who need to know what changed in South African payments this week, without reading twenty sites.</p>
+        <div class="feats">
+          <div class="feat"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="22" width="7" height="14" rx="2" fill="#3fbf95"/><rect x="16.5" y="13" width="7" height="23" rx="2" fill="#3fbf95"/><rect x="29" y="4" width="7" height="32" rx="2" fill="#f0b429"/></svg><div><b>Five signals</b><span>Regulation, funding, launches and partnerships, with the facts and the source links.</span></div></div>
+          <div class="feat"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="15" fill="none" stroke="#5ff5bd" stroke-width="3"/><path d="M20 11v10l6 4" stroke="#5ff5bd" stroke-width="3" fill="none" stroke-linecap="round"/></svg><div><b>What it means</b><span>A clearly labelled line of analysis per signal, and what to do by reader type.</span></div></div>
+          <div class="feat"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="8" width="30" height="27" rx="4" fill="none" stroke="#f0b429" stroke-width="3"/><path d="M5 16h30M13 4v8M27 4v8" stroke="#f0b429" stroke-width="3" stroke-linecap="round"/></svg><div><b>Watch next</b><span>Dated events coming up: rule publications, consultations and deadlines.</span></div></div>
+        </div>
+        <a class="btn" href="brief/">Read a sample issue</a>
+      </div>
+      <div>
+        <form id="subForm" novalidate>
+          <label for="name">Name<input id="name" name="name" autocomplete="name" required></label>
+          <label for="email">Work email<input id="email" name="email" type="email" autocomplete="email" required></label>
+          <label for="company">Company (optional)<input id="company" name="company" autocomplete="organization"></label>
+          <label for="role">Role
+            <select id="role" name="role">
+              <option>Founder or executive</option>
+              <option>Strategy, product or partnerships</option>
+              <option>Risk, compliance or legal</option>
+              <option>Investor</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label class="check" for="consent"><input id="consent" type="checkbox" required><span>I agree to receive Rand Signal and related emails about it. I can unsubscribe at any time.</span></label>
+          <button class="btn go" type="submit">Send me the brief</button>
+          <p id="formError" role="alert"></p>
+          <div id="formResult" aria-live="polite">
+            <p style="margin-top:0"><strong>Almost done.</strong> To confirm, email <code>randsignal.za@gmail.com</code> with the subject <code>Subscribe</code>, or use the button below. We'll add you and confirm by email.</p>
+            <a class="btn go" id="mailLink" href="mailto:randsignal.za@gmail.com?subject=Subscribe">Open my email app</a>
+          </div>
+        </form>
+        <p class="note">Free while we launch. No card, no payment. We only use your details to send you the brief.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" style="padding-top:0">
+    <div class="wrap">
+      <p class="kicker">Contact and policies</p>
+      <p style="max-width:70ch">Questions, corrections, or a story we should cover: email <a href="mailto:randsignal.za@gmail.com">randsignal.za@gmail.com</a>. Rand Signal is a trading name of Nkosinathi Sidogi, sole proprietor, South Africa.</p>
       <details>
         <summary>Privacy notice (POPIA)</summary>
         <div class="read">
-          <p><strong>Who we are.</strong> Rand Signal, a trading name of Nkosinathi Sidogi (sole proprietor), Johannesburg. Information Officer: Nkosinathi Sidogi, randsignal.za@gmail.com.</p>
-          <p><strong>What we collect.</strong> Your name, email address, and optionally your company and role, when you sign up for the brief. We do not collect any payment details.</p>
+          <p><strong>Who we are.</strong> Rand Signal, a trading name of Nkosinathi Sidogi (sole proprietor), South Africa. Information Officer: Nkosinathi Sidogi, randsignal.za@gmail.com.</p>
+          <p><strong>What we collect.</strong> Your name, email address, and optionally your company and role, when you sign up for the brief. We do not collect any payment details. The tools on this page run in your browser and send nothing to us.</p>
           <p><strong>Why.</strong> Only to send you the brief you asked for, manage your sign-up, and reply to you.</p>
           <p><strong>Your rights.</strong> You can ask to see, correct or delete your information, or object to its use, by emailing us. Every email has an unsubscribe option. You may also complain to the Information Regulator of South Africa.</p>
           <p><strong>Sharing.</strong> We do not sell or rent your information. We use service providers (such as our email provider) only to run the service.</p>
@@ -244,7 +341,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       <details>
         <summary>Terms of service</summary>
         <div class="read">
-          <p>Rand Signal provides market information and opinion for general information only. It is not investment, financial or legal advice. Facts come from the public sources linked in each issue and are correct as at the date of publication to the best of our knowledge; check the source before relying on any figure.</p>
+          <p>Rand Signal provides market and regulatory information for general information only. It is not investment, financial or legal advice. Facts come from the public sources linked in each issue and are correct as at the date of publication to the best of our knowledge; check the source before relying on any figure. The licence check and data residency tools summarise draft and published texts and may not reflect later changes.</p>
           <p>The brief is currently free. You can unsubscribe at any time by emailing us or using the link in any issue. If we ever introduce paid plans, we will tell you first and nothing will be charged without your agreement. You may not resell or republish the brief in full without permission; sharing a link or a short quote with attribution is welcome.</p>
         </div>
       </details>
@@ -254,31 +351,182 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
 <footer>
   <div class="wrap">
-    <span>© 2026 Rand Signal · Johannesburg, South Africa</span>
-    <span>Not investment or legal advice.</span>
+    <span>© 2026 Rand Signal · South Africa</span>
+    <span>Readiness information, not legal or investment advice.</span>
   </div>
 </footer>
 
 <script>
 (function () {
-  var form = document.getElementById('subForm');
-  var err = document.getElementById('formError');
-  var result = document.getElementById('formResult');
-  var mail = document.getElementById('mailLink');
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- hero rails ---------- */
+  var cv = document.getElementById('rails'), ctx = cv.getContext('2d'), W = 0, H = 0, mx = .5, my = .5, t0 = 0;
+  var lines = [], pulses = [];
+  function size() {
+    var r = cv.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2);
+    W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+  }
+  for (var i = 0; i < 9; i++) lines.push({ y: .18 + i * .085, a: 18 + i * 4, f: .0016 + i * .00025, s: .0004 + i * .00007, ph: i * 1.3, gold: i === 6 || i === 2 });
+  for (var j = 0; j < 14; j++) pulses.push({ l: j % lines.length, x: Math.random(), v: .0012 + Math.random() * .002 });
+  function yAt(L, x, t) { var amp = L.a * (1 + (1 - Math.abs(my - L.y)) * .6 * (reduce ? 0 : 1)); return L.y * H + Math.sin(x * L.f * W * 1 + t * L.s + L.ph) * amp + Math.sin(x * 3 + t * .0003) * 8; }
+  function frame(t) {
+    ctx.clearRect(0, 0, W, H);
+    lines.forEach(function (L) {
+      var g = ctx.createLinearGradient(0, 0, W, 0);
+      if (L.gold) { g.addColorStop(0, 'rgba(240,180,41,0)'); g.addColorStop(.5, 'rgba(240,180,41,.45)'); g.addColorStop(1, 'rgba(240,180,41,0)'); }
+      else { g.addColorStop(0, 'rgba(63,191,149,0)'); g.addColorStop(.6, 'rgba(95,245,189,.32)'); g.addColorStop(1, 'rgba(63,191,149,.05)'); }
+      ctx.strokeStyle = g; ctx.lineWidth = L.gold ? 1.6 : 1.1; ctx.beginPath();
+      for (var x = 0; x <= 1.001; x += .01) { var px = x * W, py = yAt(L, x, t); x === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); }
+      ctx.stroke();
+    });
+    pulses.forEach(function (p) {
+      if (!reduce) { p.x += p.v; if (p.x > 1) { p.x = 0; p.l = Math.floor(Math.random() * lines.length); } }
+      var L = lines[p.l], px = p.x * W, py = yAt(L, p.x, t), c = L.gold ? '#f0b429' : '#5ff5bd';
+      ctx.fillStyle = c; ctx.shadowColor = c; ctx.shadowBlur = 16; ctx.beginPath(); ctx.arc(px, py, 2.6, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
+    });
+    if (!reduce) requestAnimationFrame(frame);
+  }
+  document.querySelector('.hero').addEventListener('pointermove', function (e) { var r = cv.getBoundingClientRect(); mx = (e.clientX - r.left) / r.width; my = (e.clientY - r.top) / r.height; });
+  new ResizeObserver(function () { size(); if (reduce) frame(0); }).observe(cv);
+  size(); if (reduce) frame(0); else requestAnimationFrame(frame);
+
+  /* ---------- countdown + counters ---------- */
+  var cd = document.getElementById('cd'), cdNote = document.getElementById('cdNote');
+  var target = new Date('2026-11-30T23:59:59+02:00'), days = Math.ceil((target - new Date()) / 864e5);
+  if (days > 1) cd.textContent = days + ' days';
+  else if (days === 1) cd.textContent = '1 day';
+  else { cd.textContent = 'Awaited'; cdNote.textContent = "The SARB's end-November target has passed. Still a draft (third version, May 2026) until the final text is published."; }
+  var counted = false;
+  function count() {
+    if (counted) return; counted = true;
+    document.querySelectorAll('[data-count]').forEach(function (el) {
+      var n = +el.dataset.count;
+      if (reduce) { el.textContent = n; return; }
+      var s = performance.now();
+      (function step(now) { var k = Math.max(0, Math.min(1, (now - s) / 1200)); el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); })(s);
+    });
+  }
+  setTimeout(count, 300);
+
+  /* ---------- rules data (from the Rand Signal rules library, 24-26 Nov 2026) ---------- */
+  var R = [
+    ['Authorisation Framework (payment activities)', 'SARB', 'draft', 'Draft, 3rd version, May 2026', 'Final targeted end Nov 2026', 'Banks and non-banks doing e-money, acquiring, TPPP, remittance, payment initiation and more', 'payments licence nps tppp e-money'],
+    ['Exemption Notice, specified payment activities', 'Prudential Authority', 'draft', 'Draft, May 2026', 'Final expected with the framework', 'Takes authorised payment activities out of "the business of a bank"', 'banks act exemption'],
+    ['Directive 1 of 2024, cybersecurity in the NPS', 'SARB', 'force', 'In force since 2024', 'Applies now', 'Payment institutions, including TPPPs', 'cyber security tppp'],
+    ['Joint Standard 2 of 2024, cybersecurity', 'PA + FSCA', 'force', 'In force 1 Jun 2025', 'Applies now', 'Banks, insurers, CIS managers, pension funds and some FSPs, not most payment institutions', 'cyber security insurers'],
+    ['Joint Standard 1 of 2023, IT governance and risk', 'PA + FSCA', 'force', 'In force 15 Nov 2024', 'Applies now', 'Financial institutions regulated by the PA and FSCA', 'it governance risk'],
+    ['Cloud computing and data offshoring in the NPS', 'SARB', 'consult', 'Consultation, Mar 2025', 'No final text yet', 'Proposes SARB approval before payment institutions use cloud or move data offshore', 'cloud data offshoring azure aws'],
+    ['Joint Communication 2 of 2025, cloud and offshoring', 'PA + FSCA', 'consult', 'Guidance, 25 Jul 2025', 'Joint Standard in development', 'Financial institutions using cloud or offshoring', 'cloud guidance'],
+    ['Directive 3/2018, cloud for banks', 'Prudential Authority', 'force', 'In force since 1 Oct 2018', 'Applies now', 'Banks using cloud computing and offshoring data', 'cloud banks'],
+    ['Directive 2 of 2024, screen scraping', 'SARB', 'force', 'In force since Feb 2025', 'Applies now', 'Payment providers using screen scraping of bank logins', 'screen scraping open banking'],
+    ['Directive 1 of 2022, EFT travel rule', 'SARB', 'force', 'In force since 2022', 'Applies now', 'Banks and payment providers sending and receiving EFTs', 'eft travel rule aml'],
+    ['FIC Act, Directive 9 and PCC 61 (travel rule)', 'FIC', 'force', 'In force; PCC 61 final Apr 2026', 'Applies now', 'Accountable institutions, including crypto asset providers', 'fic aml kyc crypto travel'],
+    ['POPIA and its regulations', 'Information Regulator', 'force', 'In force; regs amended 17 Apr 2025', 'Applies now', 'Anyone processing personal information in SA', 'privacy data protection popia'],
+    ['Offshore merchants issuing and acquiring', 'SARB + FinSurv', 'draft', 'Draft, Jun 2026', 'Comments closed 17 Jul 2026', 'Cross-border facilitators and acquirers serving offshore merchants', 'cross-border offshore merchants'],
+    ['Capital Flow Management Regulations', 'Treasury + SARB', 'draft', 'Draft, 17 Apr 2026', 'Being revisited (MTBPS, Oct 2026)', 'The rewrite of exchange control', 'exchange control capital flow forex'],
+    ['COFI Bill (conduct licensing)', 'Treasury + FSCA', 'bill', 'Bill, Cabinet-approved Mar 2026', 'Tabling date unclear', 'Financial institutions, under one conduct licence regime', 'cofi conduct'],
+    ['Crypto asset provider licensing', 'FSCA', 'force', 'In force', '310 of 533 applications approved by 31 Mar 2026', 'Crypto asset service providers', 'crypto casp fais'],
+    ['PCI DSS v4.0.1', 'Card schemes', 'force', 'All v4 requirements mandatory since 31 Mar 2025', 'Applies now', 'Anyone storing, processing or sending card data', 'cards pci security'],
+    ['PayShap liability and fraud model (PEM)', 'SARB', 'bill', 'Programme', 'Liability framework due Nov 2026', 'Banks and providers offering PayShap', 'payshap fraud pem'],
+    ['NPS Vision 2030+', 'SARB', 'consult', 'Consultation, Feb 2026', 'Comments closed 31 Mar 2026', 'The whole payments industry: the next long-term strategy', 'vision 2030 strategy'],
+    ['National Credit Act: BNPL and lending', 'NCR', 'force', 'In force', 'BNPL bureau reporting from Feb 2027', 'Lenders, including buy-now-pay-later and merchant advances', 'bnpl credit lending ncr']
+  ];
+  var lab = { force: 'In force', draft: 'Draft', consult: 'Consultation', bill: 'Bill / programme' };
+  var box = document.getElementById('rules'), q = document.getElementById('q'), filt = 'all', showAll = false;
+  function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function drawRules() {
+    var term = q.value.trim().toLowerCase();
+    var out = R.filter(function (r) { return (filt === 'all' || r[2] === filt) && (!term || (r.join(' ').toLowerCase().indexOf(term) > -1)); });
+    var small = matchMedia('(max-width: 700px)').matches, cut = small && !showAll && out.length > 6, total = out.length;
+    if (cut) out = out.slice(0, 6);
+    box.innerHTML = (out.length ? out.map(function (r) {
+      return '<article class="rule"><span class="st ' + r[2] + '">' + lab[r[2]] + '</span><h3>' + esc(r[0]) + '</h3><div class="who">' + esc(r[5]) + '</div><div class="meta"><span>' + esc(r[1]) + '</span><span>' + esc(r[3]) + '</span></div><div class="meta" style="border:0;padding:0;margin:0"><span style="color:#f0b429">Next: ' + esc(r[4]) + '</span></div></article>';
+    }).join('') : '<p class="empty">No rules match. Try another word.</p>') + (cut ? '<button type="button" class="btn" id="more">Show all ' + total + ' rules</button>' : '');
+    var m = document.getElementById('more'); if (m) m.addEventListener('click', function () { showAll = true; drawRules(); });
+  }
+  document.querySelectorAll('#filters .chip').forEach(function (b) {
+    b.addEventListener('click', function () { document.querySelectorAll('#filters .chip').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); filt = b.dataset.f; drawRules(); });
+  });
+  q.addEventListener('input', drawRules); drawRules();
+
+  /* ticker */
+  var tk = R.filter(function (r) { return r[2] !== 'force'; }).map(function (r) { return '<span class="d"><b>' + esc(lab[r[2]].toUpperCase()) + '</b>' + esc(r[0]) + ' · ' + esc(r[4]) + '</span>'; }).join('');
+  document.getElementById('tick').innerHTML = tk + tk;
+
+  /* ---------- licence check (draft Authorisation Framework, May 2026) ---------- */
+  var common = ['Keep client funds segregated, never as your own money; funds not paid out by the next business day go to a segregated bank account', 'Get the SARB\'s written approval before outsourcing, and send it SLAs within 10 business days of signing', 'Name every third party that holds your data, with its physical address (cloud: name the provider and region)', 'Register with the FIC within 30 business days and keep records for five years'];
+  var A = [
+    { k: 'emoney', code: 'A1', t: 'E-money issuing', s: 'Wallets and stored value', vl: 'Average monthly e-money liabilities', tiered: true, cap: ['R8m', 'R5m'], when: 'From the effective date', extra: ['Tier 1 wallet caps for individuals: R15 000 a day, R50 000 a month, R50 000 balance'] },
+    { k: 'acq', code: 'B', t: 'Acquiring', s: 'Signing up merchants to accept payments', vl: null, cap: ['R3m'], when: 'From the effective date', extra: [] },
+    { k: 'tppp', code: 'D', t: 'Payments to third persons (TPPP)', s: 'Collecting or paying on behalf of others', vl: 'Average monthly transaction value', tiered: true, cap: ['R2m', 'R500k'], when: '6 months after effective date (existing TPPPs)', extra: ['Beneficiary funds may not be held for more than 30 days', 'Existing TPPPs keep their bank sponsorship until they apply'] },
+    { k: 'rem', code: 'F', t: 'Money remittance', s: 'Sending money for clients (domestic)', vl: 'Average monthly remittance liabilities', tiered: true, cap: ['R2m', 'R500k'], when: '4 months after effective date (banks\' partners, ADLAs)', extra: ['Tier 1 limits: R5 000 a day, R50 000 a month per client; Tier 2: R2 500 a day, R25 000 a month'] },
+    { k: 'pi', code: 'C2', t: 'Payment initiation', s: 'Starting payments from a customer\'s account', vl: null, cap: ['To confirm'], when: 'To confirm when final', extra: ['Capital for this activity is unclear in the draft; we will confirm it from the final text'] },
+    { k: 'cs', code: 'C1', t: 'Clearing and settlement', s: 'Clearing payments between participants', vl: null, cap: ['To confirm'], when: 'To confirm when final', extra: ['Capital for this activity is unclear in the draft; we will confirm it from the final text'] }
+  ];
+  var acts = document.getElementById('acts'), cur = 0, vol = document.getElementById('vol');
+  acts.innerHTML = A.map(function (a, i) { return '<button type="button" class="act" aria-pressed="' + (i === 0) + '"><span class="code">' + a.code + '</span><span><b>' + a.t + '</b><small>' + a.s + '</small></span></button>'; }).join('');
+  function money(v) { return v >= 1e6 ? 'R' + (v / 1e6).toFixed(v < 1e7 ? 1 : 0).replace('.0', '') + 'm' : 'R' + Math.round(v / 1000) + 'k'; }
+  function sliderVal() { var p = +vol.value / 100; return Math.round(50000 * Math.pow(1000, p) / 10000) * 10000; } /* R50k to R50m, log scale */
+  function drawLic() {
+    var a = A[cur], v = sliderVal();
+    document.getElementById('volWrap').style.display = a.tiered ? '' : 'none';
+    document.getElementById('volLabel').textContent = a.vl || '';
+    document.getElementById('volO').textContent = money(v);
+    var t1 = v > 5e6;
+    document.getElementById('rTier').textContent = a.tiered ? (t1 ? 'Tier 1' : 'Tier 2') : 'One tier';
+    document.getElementById('rTierN').textContent = a.tiered ? (t1 ? 'over R5m average a month' : 'R5m or less a month') : 'no tier split in the draft';
+    document.getElementById('rCap').textContent = a.tiered ? (t1 ? a.cap[0] : a.cap[1]) : a.cap[0];
+    document.getElementById('rWhen').textContent = a.when;
+    document.getElementById('rDo').innerHTML = a.extra.concat(common).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('');
+  }
+  [].forEach.call(acts.children, function (b, i) { b.addEventListener('click', function () { cur = i; [].forEach.call(acts.children, function (x, j) { x.setAttribute('aria-pressed', i === j); }); drawLic(); }); });
+  vol.addEventListener('input', drawLic); drawLic();
+
+  /* ---------- Africa data residency ---------- */
+  var C = [
+    { n: 'Namibia', p: 7, st: 'Open for non-banks, for now', reg: 'Bank of Namibia', rule: 'No general data protection law in force yet; a Bill was tabled in 2025. Banks may not outsource production core-banking data centres and must keep core records in Namibia. How far this reaches non-bank payment providers is unclear.', law: 'BoN cloud determination (2022); BID-19' },
+    { n: 'Botswana', p: 28, st: 'Transfers with safeguards', reg: 'Bank of Botswana, IDPC', rule: 'In force since 14 January 2025. Transfers need an adequacy finding or safeguards such as standard contractual clauses. Whether a copy must stay in Botswana is still to confirm.', law: 'Data Protection Act 2024, ss. 74–78' },
+    { n: 'South Africa', p: 50, st: 'Approval proposed', reg: 'SARB, Information Regulator', rule: 'POPIA allows transfers with adequate protection or binding agreements. The SARB has proposed that payment institutions get its approval before using cloud or moving data offshore. Still a consultation.', law: 'POPIA s. 72; SARB consultation paper, Mar 2025' },
+    { n: 'Kenya', p: 73, st: 'Local copy required', reg: 'Central Bank of Kenya, ODPC', rule: 'Payment systems licensed under the NPS Act must process data through a server and data centre in Kenya, or keep at least one serving copy there.', law: 'Data Protection (General) Regulations 2021, reg. 26' },
+    { n: 'Zambia', p: 93, st: 'In-country by default', reg: 'Bank of Zambia, Data Protection Commissioner', rule: 'Personal data must be processed and stored on servers in Zambia. Sensitive data, including biometrics from KYC, must always stay. Other data can leave only with consent plus an approved contract or intragroup scheme, or an approved transfer.', law: 'Data Protection Act 2021, ss. 70–71' }
+  ];
+  var spec = document.getElementById('spec'), cty = document.getElementById('cty');
+  C.forEach(function (c, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'pin'; b.style.left = c.p + '%'; b.setAttribute('aria-pressed', i === 4);
+    b.innerHTML = '<span>' + c.n + '</span><i></i>'; b.addEventListener('click', function () { pickC(i); }); spec.appendChild(b);
+  });
+  function pickC(i) {
+    var c = C[i];
+    spec.querySelectorAll('.pin').forEach(function (b, j) { b.setAttribute('aria-pressed', i === j); });
+    cty.innerHTML = '<div><span class="st ' + (c.p > 60 ? 'draft' : 'force') + '">' + esc(c.st) + '</span><h3 style="margin-top:10px">' + c.n + '</h3><p>' + esc(c.rule) + '</p></div><dl><div><dt>Regulators</dt><dd>' + esc(c.reg) + '</dd></div><div><dt>Law</dt><dd>' + esc(c.law) + '</dd></div><div class="cloud"><svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M8 20h15a6 6 0 0 0 0-12 8 8 0 0 0-15-1 6.5 6.5 0 0 0 0 13z" fill="none" stroke="#5ff5bd" stroke-width="2"/></svg><span class="note" style="margin:0">Microsoft Azure\'s African regions are in Johannesburg and Cape Town, so "use the cloud" usually means SA hosting, which counts as offshore everywhere else.</span></div></dl>';
+  }
+  pickC(4);
+
+  /* ---------- lessons ---------- */
+  var L = [
+    ['Synapse', 'United States · 2024', 'A middleman between fintech apps and partner banks collapsed. A court-appointed trustee estimated up to $95m of customer funds missing and about $200m frozen; pooled accounts and poor ledgers meant nobody could say whose money was whose.', 'Safeguarding is a ledger problem, not just a bank account. Reconcile every customer balance daily. It\'s why the SARB draft insists on segregated client funds.', 'https://fortune.com/2025/03/07/synapse-evolve-mercury-bankruptcy-lawsuits', 'Fortune'],
+    ['Wirecard', 'Germany · 2020', 'A payments processor admitted that €1.9bn, a quarter of its balance sheet, supposedly held in trustee accounts at two Philippine banks, did not exist. Half its revenue ran through outsourced partners.', 'Opaque outsourcing and partners nobody can verify are red flags. Confirm cash directly with the bank, not from documents the company supplies.', 'https://www.irishtimes.com/business/financial-services/wirecard-and-ey-germany-the-anatomy-of-a-flawed-audit-1.4710898', 'Irish Times / FT'],
+    ['Mirror Trading International', 'South Africa · 2020', 'A "bitcoin trading" club promising up to 10% a month collapsed. The FSCA found no evidence of trading success.', 'Guaranteed high returns, referral commissions and no licence are the classic Ponzi signs.', 'https://citizen.co.za/business/money-down-the-drain-bitcoin-scheme-mirror-trading-international-to-be-liquidated', 'The Citizen'],
+    ['Four fintechs paused by the CBN', 'Nigeria · 2024', 'The Central Bank of Nigeria ordered OPay, Palmpay, Kuda and Moniepoint to stop onboarding new customers amid concerns over weak KYC. They added facial checks and address verification before the ban was lifted.', 'Growth built on thin KYC can be switched off overnight. Onboarding controls are a growth dependency, not paperwork.', 'https://techeconomy.ng/kyc-as-major-reason-cbn-ordered-four-fintech-startups-to-halt-customer-onboarding/', 'Techeconomy']
+  ];
+  document.getElementById('cases').innerHTML = L.map(function (c) {
+    return '<button type="button" class="case" aria-pressed="false"><span class="in"><span class="face"><span><span class="yr">' + c[1] + '</span><h3 style="margin:6px 0 10px">' + esc(c[0]) + '</h3><p>' + esc(c[2]) + '</p></span><span class="flip">Tap for the lesson ↻</span></span><span class="face back"><span><span class="yr">The lesson</span><p style="margin-top:10px;font-size:17px;color:#effaf5">' + esc(c[3]) + '</p></span><span class="flip">Source: ' + esc(c[5]) + ' ↻</span></span></span></button>';
+  }).join('');
+  document.querySelectorAll('.case').forEach(function (b) { b.addEventListener('click', function () { b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'); }); });
+
+  /* ---------- subscribe ---------- */
+  var form = document.getElementById('subForm'), err = document.getElementById('formError'), result = document.getElementById('formResult'), mail = document.getElementById('mailLink');
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var name = document.getElementById('name').value.trim();
-    var email = document.getElementById('email').value.trim();
-    var company = document.getElementById('company').value.trim();
-    var role = document.getElementById('role').value;
-    var ok = document.getElementById('consent').checked;
+    var name = document.getElementById('name').value.trim(), email = document.getElementById('email').value.trim();
+    var company = document.getElementById('company').value.trim(), role = document.getElementById('role').value, ok = document.getElementById('consent').checked;
     if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Please enter your name and a valid email address.'; return; }
     if (!ok) { err.textContent = 'Please tick the box to agree to receive the brief.'; return; }
     err.textContent = '';
     var body = 'Please send me the free Rand Signal brief.\n\nName: ' + name + '\nEmail: ' + email + '\nCompany: ' + (company || '-') + '\nRole: ' + role + '\n\nI agree to receive Rand Signal and related emails and can unsubscribe at any time.';
     mail.href = 'mailto:randsignal.za@gmail.com?subject=' + encodeURIComponent('Subscribe') + '&body=' + encodeURIComponent(body);
     result.classList.add('show');
-    result.scrollIntoView({ block: 'nearest' });
   });
 })();
 </script>
