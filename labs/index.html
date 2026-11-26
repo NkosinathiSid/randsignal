@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rand Signal Labs · Transaction Monitor (live demo, synthetic data)</title>
+<meta name="description" content="A live, in-browser transaction monitoring demo on made-up South African card, EFT and PayShap payments. Watch fraud rules fire, money-movement patterns light up, and work the case queue. Synthetic data, readiness demo, not legal advice.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Rand Signal">
+<meta property="og:title" content="Rand Signal Labs: Transaction Monitor">
+<meta property="og:description" content="Watch fraud rules fire on synthetic South African payments, live in your browser. Then work the case queue.">
+<meta property="og:url" content="https://randsignal.co.za/labs/">
+<meta property="og:image" content="https://randsignal.co.za/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://randsignal.co.za/og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect x='2' y='16' width='5' height='10' rx='1' fill='%233fbf95'/%3E%3Crect x='11.5' y='9' width='5' height='17' rx='1' fill='%233fbf95'/%3E%3Crect x='21' y='2' width='5' height='24' rx='1' fill='%235ff5bd'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#050b09;--bg2:#08130f;--panel:#0c1915;--panel2:#10211b;--line:#1d3a2f;--ink:#effaf5;--muted:#a4bdb2;--green:#3fbf95;--neon:#5ff5bd;--gold:#f0b429;--red:#ff7a6b;--blue:#7cb8ff;--violet:#d7a8ff;--mono:"IBM Plex Mono",ui-monospace,monospace;--disp:"Archivo","IBM Plex Sans",Arial,sans-serif}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",Arial,sans-serif;overflow-x:clip}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(800px 480px at 90% -5%,rgba(63,191,149,.16),transparent 60%),radial-gradient(600px 420px at -10% 40%,rgba(240,180,41,.08),transparent 60%)}
+a{color:var(--neon);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+h1,h2,h3{font-family:var(--disp);letter-spacing:-.02em;line-height:1.06;margin:0;text-wrap:balance}
+.wrap{max-width:1320px;margin:0 auto;padding:0 max(4vw,14px)}
+section{padding:clamp(28px,4vw,56px) 0}
+.kicker{font:500 13px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 14px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:18px;height:2px;background:var(--gold)}
+h2{font-size:clamp(28px,3.4vw,42px);margin-bottom:12px}
+.lede{color:var(--muted);font-size:18px;max-width:68ch;margin:0 0 22px}
+.note{font-size:14px;color:var(--muted)}
+header{position:sticky;top:0;z-index:20;background:rgba(5,11,9,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:10px 22px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.brand{display:flex;align-items:center;gap:10px;font:800 20px/1 var(--disp);color:var(--ink);text-decoration:none}
+.brand small{font:500 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(240,180,41,.45);border-radius:999px;padding:5px 8px}
+nav{display:flex;gap:4px 20px;flex-wrap:wrap;align-items:center}
+nav a{color:var(--muted);text-decoration:none;font-size:15px;padding:10px 0}
+nav a:hover,nav a[aria-current]{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;font:600 15px/1 "IBM Plex Sans",Arial,sans-serif;text-decoration:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;transition:transform .15s,border-color .15s}
+.btn:hover{transform:translateY(-1px);border-color:var(--green)}
+.btn.go{background:var(--neon);border-color:var(--neon);color:#03140d;box-shadow:0 0 30px rgba(95,245,189,.28)}
+.btn.warn{border-color:rgba(255,122,107,.6);color:#ffd2cc;background:rgba(255,122,107,.08)}
+.btn.warn:hover{border-color:var(--red)}
+.btn.gold{border-color:rgba(240,180,41,.6);color:#ffe3a3;background:rgba(240,180,41,.08)}
+nav .btn.go{color:#03140d;padding:0 16px;min-height:40px}
+.banner{background:repeating-linear-gradient(135deg,rgba(240,180,41,.12) 0 14px,rgba(240,180,41,.05) 14px 28px);border-bottom:1px solid rgba(240,180,41,.35);font:500 13px/1.4 var(--mono);color:#ffe3a3;text-align:center;padding:8px 14px;letter-spacing:.03em}
+.hero{padding:clamp(28px,4vw,52px) 0 10px}
+.hero h1{font-size:clamp(36px,5vw,64px);font-weight:800;margin-bottom:16px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--neon),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px;margin-top:6px}
+.how div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:15px;color:#cfe0d8}
+.how b{display:block;font:700 15px/1.3 var(--disp);color:var(--ink);margin-bottom:2px}
+.how i{font-style:normal;font:500 12px/1 var(--mono);color:var(--gold);margin-right:6px}
+/* console */
+.console{position:relative;z-index:15;background:rgba(8,19,15,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.console .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding-top:10px;padding-bottom:10px}
+.clock{font:500 15px/1 var(--mono);color:var(--neon);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.clock i{width:8px;height:8px;border-radius:50%;background:var(--neon);animation:ping 1.6s infinite}
+.clock.paused{color:var(--gold)}.clock.paused i{background:var(--gold);animation:none}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(95,245,189,.6)}70%{box-shadow:0 0 0 8px rgba(95,245,189,0)}100%{box-shadow:0 0 0 0 rgba(95,245,189,0)}}
+.speed{display:flex;align-items:center;gap:8px;font:500 13px var(--mono);color:var(--muted)}
+.speed input{width:120px}
+.kpis{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.kpi{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;min-width:92px}
+.kpi b{display:block;font:800 19px/1.1 var(--disp);color:var(--neon);font-variant-numeric:tabular-nums}
+.kpi span{font:500 11px/1.2 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi.alert b{color:var(--gold)}.kpi.case b{color:var(--red)}
+input[type=range]{-webkit-appearance:none;appearance:none;height:30px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--gold))}
+input[type=range]::-moz-range-track{height:6px;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--gold))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;margin-top:-6px;box-shadow:0 0 0 5px rgba(95,245,189,.2)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:0}
+/* grid */
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px;margin-top:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.ph h3{font-size:19px}
+.ph span{font:500 12px/1.3 var(--mono);color:var(--muted)}
+.feed{font:500 13px/1.3 var(--mono);display:grid;gap:4px;height:430px;overflow:hidden;align-content:start}
+.tx{display:grid;grid-template-columns:60px 66px minmax(0,1fr) 92px;gap:8px;align-items:center;padding:7px 8px;border-radius:9px;background:var(--bg2);border:1px solid transparent;animation:in .35s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.tx .t{color:var(--muted)}
+.tx .who{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#cfe0d8}
+.tx .who small{display:block;color:var(--muted);font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.tx .amt{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+.tx.hit{border-color:rgba(255,122,107,.55);background:rgba(255,122,107,.08)}
+.tx.hit .amt{color:#ffd2cc}
+.rail{justify-self:start;font:500 11px/1 var(--mono);letter-spacing:.05em;padding:5px 7px;border-radius:999px;border:1px solid}
+.rail.card{color:var(--blue);border-color:rgba(124,184,255,.5)}
+.rail.eft{color:var(--violet);border-color:rgba(215,168,255,.5)}
+.rail.payshap{color:var(--neon);border-color:rgba(95,245,189,.5)}
+.tags{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.tag{font:500 11px/1 var(--mono);padding:4px 7px;border-radius:6px;background:rgba(255,122,107,.16);color:#ffd2cc}
+.cvwrap{position:relative;height:430px;border-radius:12px;background:radial-gradient(circle at 50% 50%,rgba(63,191,149,.07),transparent 70%),var(--bg2);overflow:hidden}
+#graph{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}
+#tip{position:absolute;pointer-events:none;background:rgba(5,11,9,.95);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:500 12px/1.4 var(--mono);color:var(--ink);display:none;max-width:240px;z-index:2}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font:500 12px var(--mono);color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+/* cases */
+.cases{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:14px;margin-top:14px}
+.queue{display:grid;gap:6px;align-content:start;max-height:560px;overflow:auto;padding-right:2px}
+.qi{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);cursor:pointer;font:inherit}
+.qi:hover{border-color:var(--green)}
+.qi[aria-current=true]{border-color:var(--neon);background:linear-gradient(135deg,rgba(95,245,189,.1),rgba(240,180,41,.05))}
+.qi b{font:600 15px/1.3 "IBM Plex Sans",Arial,sans-serif}
+.qi small{grid-column:1/-1;font:500 12px/1.3 var(--mono);color:var(--muted)}
+.sev{font:500 11px/1 var(--mono);padding:5px 7px;border-radius:999px;border:1px solid;align-self:start;white-space:nowrap}
+.sev.high{color:#ffd2cc;border-color:rgba(255,122,107,.6)}
+.sev.med{color:#ffe3a3;border-color:rgba(240,180,41,.6)}
+.sev.low{color:var(--blue);border-color:rgba(124,184,255,.5)}
+.qi.done{opacity:.55}
+.qtabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.chip{min-height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--muted);font:500 13px/1 "IBM Plex Sans",Arial,sans-serif;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:#03140d;border-color:var(--ink)}
+.detail{min-height:380px}
+.detail .empty{color:var(--muted);display:grid;place-items:center;text-align:center;min-height:340px;padding:20px}
+.dh{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:start;border-bottom:1px dashed var(--line);padding-bottom:12px;margin-bottom:12px}
+.dh h3{font-size:24px;margin-bottom:4px}
+.dh .meta{font:500 12px/1.5 var(--mono);color:var(--muted)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.box{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.box h4{margin:0 0 8px;font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.box ul{margin:0;padding:0 0 0 18px;display:grid;gap:4px;font-size:15px}
+.box p{margin:0 0 8px;font-size:15px}
+.box.law{border-color:rgba(240,180,41,.4);background:rgba(240,180,41,.05)}
+.law .st{display:inline-block;font:500 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;border:1px solid;margin-right:6px;vertical-align:1px}
+.st.force{color:var(--neon);border-color:rgba(95,245,189,.5)}
+.st.prog{color:var(--violet);border-color:rgba(215,168,255,.5)}
+.law .one{padding:8px 0;border-top:1px dashed var(--line)}
+.law .one:first-of-type{border-top:0;padding-top:0}
+.law b{font:700 15px/1.3 var(--disp)}
+.law p{font-size:14px;color:#cfe0d8;margin:4px 0 0}
+table{width:100%;border-collapse:collapse;font:500 12.5px/1.35 var(--mono)}
+th{text-align:left;color:var(--muted);font-weight:500;padding:6px;border-bottom:1px solid var(--line)}
+td{padding:6px;border-bottom:1px solid rgba(29,58,47,.6);vertical-align:top}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tw{overflow:auto;max-height:230px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.outcome{margin-top:14px;border-radius:12px;padding:12px 14px;font-size:15px;display:none}
+.outcome.show{display:block}
+.outcome.good{border:1px solid var(--neon);background:rgba(95,245,189,.07)}
+.outcome.bad{border:1px solid var(--red);background:rgba(255,122,107,.07)}
+.str{margin-top:12px;border:1px dashed rgba(240,180,41,.55);border-radius:12px;padding:12px 14px;font:500 13px/1.55 var(--mono);color:#ffe9b8;display:none;white-space:pre-wrap}
+.str.show{display:block}
+.score{font:500 13px/1.4 var(--mono);color:var(--muted);margin-top:10px}
+.score b{color:var(--neon)}
+/* rules */
+.rset{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:10px}
+.rs{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:6px;align-content:start}
+.rs .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.rs b{font:700 17px/1.2 var(--disp)}
+.rs p{margin:0;font-size:14px;color:#cfe0d8}
+.rs label{font:500 12px var(--mono);color:var(--muted);display:grid;gap:0}
+.rs output{color:var(--neon)}
+.sw{position:relative;width:44px;height:26px;flex:none}
+.sw input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:1}
+.sw span{position:absolute;inset:0;border-radius:99px;background:var(--line);transition:background .2s}
+.sw span::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw input:checked+span{background:var(--green)}
+.sw input:checked+span::after{transform:translateX(18px)}
+.sw input:focus-visible+span{outline:3px solid var(--gold);outline-offset:2px}
+.rs .hits{font:500 12px var(--mono);color:var(--gold)}
+/* engine */
+.flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:stretch}
+.fl{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;position:relative}
+.fl b{display:block;font:700 16px/1.25 var(--disp);margin-bottom:4px}
+.fl span{font-size:14px;color:var(--muted)}
+.fl small{display:block;font:500 11px/1 var(--mono);color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.fl:not(:last-child)::after{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);color:var(--neon);font:600 16px var(--mono);z-index:1}
+.caveat{margin-top:16px;border-left:3px solid var(--gold);padding:4px 0 4px 14px;color:#cfe0d8;max-width:90ch}
+.caveat p{margin:0 0 8px}
+footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:14px;margin-top:24px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sr{position:absolute;left:-9999px}
+@media(max-width:1000px){.grid,.cases{grid-template-columns:minmax(0,1fr)}.flow{grid-template-columns:minmax(0,1fr)}.fl:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-16px;transform:translateX(-50%)}.kpis{margin-left:0}}
+@media(max-width:700px){.cols{grid-template-columns:minmax(0,1fr)}.console{position:static}nav .hide{display:none}.feed,.cvwrap{height:360px}.tx{grid-template-columns:52px 60px minmax(0,1fr) 80px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Rand Signal home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="16" width="5" height="10" rx="1" fill="#3fbf95"/><rect x="11.5" y="9" width="5" height="17" rx="1" fill="#3fbf95"/><rect x="21" y="2" width="5" height="24" rx="1" fill="#5ff5bd"/></svg>
+      Rand Signal <small>Labs</small>
+    </a>
+    <nav aria-label="Site">
+      <a href="/#radar">Rule radar</a>
+      <a class="hide" href="/#licence">Licence check</a>
+      <a href="/labs/" aria-current="page">Labs</a>
+      <a class="btn go" href="/#brief">Get the brief</a>
+    </nav>
+  </div>
+</header>
+<div class="banner" role="note">SYNTHETIC DATA ONLY · readiness demo · not a compliance product · not legal advice</div>
+
+<main>
+  <section class="hero" aria-labelledby="h1">
+    <div class="wrap">
+      <p class="kicker">Rand Signal Labs · Transaction Monitor</p>
+      <h1 id="h1">Watch fraud rules fire on South African payments, <em>live.</em></h1>
+      <p class="lede">This page makes up card, EFT and PayShap payments in your browser and runs them through five detection rules as they arrive. When a rule fires it opens a case. You play the investigator: read why it fired, then close it or escalate it. Every account, name and amount here is invented.</p>
+      <div class="how">
+        <div><b><i>01</i>Payments stream in</b>Made-up payments across 14 SA cities, in rand, on three rails.</div>
+        <div><b><i>02</i>Rules check each one</b>Velocity, impossible travel and unusual amounts, per payment.</div>
+        <div><b><i>03</i>The network is watched</b>Money going round in circles, and many people paying one account.</div>
+        <div><b><i>04</i>You work the cases</b>Escalate or close. The demo then tells you what really happened.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="console" role="region" aria-label="Simulation controls">
+    <div class="wrap">
+      <div class="clock" id="clock" aria-live="off"><i></i><span id="clockT">08:00:00</span> <span style="color:var(--muted)">SAST (simulated)</span></div>
+      <button class="btn" id="pause" type="button" aria-pressed="false">Pause</button>
+      <label class="speed">Speed <input type="range" id="speed" min="1" max="10" value="3" aria-label="Simulation speed"><output id="speedO">3×</output></label>
+      <button class="btn warn" id="ring" type="button">Inject a fraud ring</button>
+      <button class="btn gold" id="clone" type="button">Inject a cloned card</button>
+      <button class="btn" id="reset" type="button">Reset</button>
+      <div class="kpis" aria-live="off">
+        <div class="kpi"><b id="kTx">0</b><span>Payments</span></div>
+        <div class="kpi"><b id="kVol">R 0</b><span>Volume</span></div>
+        <div class="kpi alert"><b id="kAl">0</b><span>Alerts</span></div>
+        <div class="kpi case"><b id="kCase">0</b><span>Open cases</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section style="padding-top:0" aria-label="Live monitor">
+    <div class="wrap">
+      <div class="grid">
+        <div class="panel">
+          <div class="ph"><h3>Live payments</h3><span>newest first · red = a rule fired</span></div>
+          <div class="feed" id="feed" aria-live="off"></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><h3>Money-movement network</h3><span>last 45 simulated minutes · hover a dot, click a red one</span></div>
+          <div class="cvwrap"><canvas id="graph" aria-label="Network graph of accounts and payments between them" role="img"></canvas><div id="tip"></div></div>
+          <div class="legend">
+            <span><i style="background:var(--green)"></i>Personal</span>
+            <span><i style="background:var(--blue)"></i>Merchant</span>
+            <span><i style="background:var(--violet)"></i>Business</span>
+            <span><i style="background:var(--red);box-shadow:0 0 8px var(--red)"></i>In an open case</span>
+            <span><i style="background:var(--gold)"></i>Circle or fan-in edge</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cases">
+        <div class="panel">
+          <div class="ph"><h3>Case queue</h3><span id="qCount">0 cases</span></div>
+          <div class="qtabs" role="group" aria-label="Filter cases">
+            <button class="chip" type="button" aria-pressed="true" data-q="open">Open</button>
+            <button class="chip" type="button" aria-pressed="false" data-q="done">Decided</button>
+            <button class="chip" type="button" aria-pressed="false" data-q="all">All</button>
+          </div>
+          <div class="queue" id="queue" aria-live="polite"></div>
+          <div class="score" id="score">No decisions yet. Tip: press <b>Inject a fraud ring</b>, then open the red case.</div>
+        </div>
+        <div class="panel detail" id="detail" aria-live="polite">
+          <div class="empty">Pick a case from the queue to investigate it.<br>Cases open by themselves as the rules fire.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rules" aria-labelledby="rulesH">
+    <div class="wrap">
+      <p class="kicker">The rules</p>
+      <h2 id="rulesH">Five rules, and you can tune them</h2>
+      <p class="lede">Tighter settings catch more fraud and also bother more honest customers. Move a slider and watch the false positives in the queue change. Real teams make this trade-off every week.</p>
+      <div class="rset" id="rset"></div>
+    </div>
+  </section>
+
+  <section id="engine" aria-labelledby="engH">
+    <div class="wrap">
+      <p class="kicker">Planned · phase 2</p>
+      <h2 id="engH">The same logic as a real engine, on Azure</h2>
+      <p class="lede">This demo runs entirely in your browser. The next step is the same rules as proper cloud software, open-sourced on GitHub, deployable with one command and switched off when not demoing. Not built yet.</p>
+      <div class="flow">
+        <div class="fl"><small>In</small><b>Event Hubs</b><span>Payments stream in, synthetic first.</span></div>
+        <div class="fl"><small>Rules</small><b>Stream Analytics or Functions</b><span>Velocity, travel and amount checks per payment.</span></div>
+        <div class="fl"><small>Network</small><b>Graph store</b><span>Cosmos DB (Gremlin) or Neo4j for circles and fan-in.</span></div>
+        <div class="fl"><small>Cases</small><b>Case store and audit trail</b><span>Every decision logged, kept and retrievable.</span></div>
+        <div class="fl"><small>People</small><b>Dashboard</b><span>The investigator view you're using above.</span></div>
+      </div>
+      <div class="caveat">
+        <p><strong>What this is not.</strong> It is not a compliance product and it does not make anyone compliant. Deciding whether to report a transaction stays with the institution's compliance officer.</p>
+        <p><strong>No real data.</strong> It will not touch real customer data until data-processing agreements under POPIA, a security review and contracts are in place.</p>
+        <p>Building a payments product and want to talk about monitoring readiness? <a href="mailto:randsignal.za@gmail.com?subject=Transaction%20Monitor%20demo">randsignal.za@gmail.com</a> · or <a href="/#brief">get the free weekly brief</a>.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Rand Signal · a brand of Hack IT Solutions (Pty) Ltd</span>
+    <span>Synthetic data. Readiness information, not legal or investment advice. Rule references as of 26 Nov 2026.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var fmtR = new Intl.NumberFormat('en-ZA', { maximumFractionDigits: 0 });
+  function R(n) { return 'R ' + fmtR.format(Math.round(n)); }
+  function Rshort(n) { return n >= 1e6 ? 'R ' + (n / 1e6).toFixed(1) + 'm' : n >= 1e4 ? 'R ' + Math.round(n / 1e3) + 'k' : R(n); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function logn(m, s) { var u = 1 - Math.random(), v = Math.random(); return m * Math.exp(s * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v)); }
+  var MIN = 60000;
+  function clock(t) { var s = Math.floor(t / 1000), h = Math.floor(s / 3600) % 24, m = Math.floor(s / 60) % 60, x = s % 60; return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (x < 10 ? '0' : '') + x; }
+  function hm(t) { return clock(t).slice(0, 5); }
+
+  /* ---------- places ---------- */
+  var CITIES = {
+    'Johannesburg': [-26.20, 28.05], 'Pretoria': [-25.75, 28.19], 'Cape Town': [-33.92, 18.42], 'Durban': [-29.86, 31.03],
+    'Gqeberha': [-33.96, 25.60], 'Bloemfontein': [-29.12, 26.21], 'East London': [-33.02, 27.91], 'Polokwane': [-23.90, 29.45],
+    'Mbombela': [-25.47, 30.97], 'Kimberley': [-28.74, 24.76], 'Rustenburg': [-25.67, 27.24], 'Pietermaritzburg': [-29.60, 30.38],
+    'George': [-33.96, 22.46], 'Mahikeng': [-25.86, 25.64]
+  };
+  var CW = ['Johannesburg', 'Johannesburg', 'Johannesburg', 'Pretoria', 'Pretoria', 'Cape Town', 'Cape Town', 'Cape Town', 'Durban', 'Durban', 'Gqeberha', 'Bloemfontein', 'East London', 'Polokwane', 'Mbombela', 'Kimberley', 'Rustenburg', 'Pietermaritzburg', 'George', 'Mahikeng'];
+  var NEAR = { 'Johannesburg': ['Pretoria', 'Rustenburg'], 'Pretoria': ['Johannesburg', 'Rustenburg'], 'Rustenburg': ['Johannesburg', 'Pretoria', 'Mahikeng'], 'Durban': ['Pietermaritzburg'], 'Pietermaritzburg': ['Durban'], 'Cape Town': ['George'], 'George': ['Cape Town', 'Gqeberha'], 'Gqeberha': ['East London', 'George'], 'East London': ['Gqeberha'], 'Polokwane': ['Pretoria'], 'Mbombela': ['Pretoria'], 'Bloemfontein': ['Kimberley'], 'Kimberley': ['Bloemfontein'], 'Mahikeng': ['Rustenburg'] };
+  function km(a, b) {
+    var p = CITIES[a], q = CITIES[b], r = Math.PI / 180;
+    var dl = (q[0] - p[0]) * r, dn = (q[1] - p[1]) * r;
+    var h = Math.sin(dl / 2) * Math.sin(dl / 2) + Math.cos(p[0] * r) * Math.cos(q[0] * r) * Math.sin(dn / 2) * Math.sin(dn / 2);
+    return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  }
+  var MERCH = ['Spaza shop', 'Fuel station', 'Pharmacy', 'Butchery', 'Hardware store', 'Coffee shop', 'Supermarket', 'Shisanyama', 'Clothing store', 'Electronics store', 'Taxi rank kiosk', 'Bakery', 'Liquor store', 'Online store'];
+  var BIZ = ['Wholesaler', 'Logistics (Pty) Ltd', 'Cleaning services', 'Building supplies', 'Security company', 'Accounting practice', 'Property agency', 'Catering company'];
+  var REF_CARD = ['POS purchase', 'Contactless', 'Tap to pay', 'Chip & PIN'];
+  var REF_PS = ['Lunch money', 'Thanks!', 'Taxi fare', 'Stokvel', 'Airtime', 'Groceries', 'Petrol split', 'For mom', 'Braai contribution', 'Rent share'];
+  var REF_EFT = ['Rent Dec', 'Invoice 2231', 'School fees', 'Insurance', 'Loan repayment', 'Invoice 8840', 'Levy', 'Car service'];
+  var SCAM = ['Deposit for rental', 'Parcel release fee', 'Job registration fee', 'Investment top-up', 'Marketplace payment', 'Customs fee'];
+
+  /* ---------- rule settings ---------- */
+  var RULES = {
+    velocity: { on: true, name: 'Velocity', n: 5, win: 10, desc: 'Too many outgoing payments from one personal account in a few minutes. Business accounts are left out because they pay in batches.', param: [['n', 'Payments', 3, 10, ''], ['win', 'Within', 3, 30, ' min']] },
+    travel: { on: true, name: 'Impossible travel', kmh: 800, desc: 'Two card payments in cities too far apart for the time between them. Speeds above a passenger jet mean two cards, not one traveller.', param: [['kmh', 'Faster than', 200, 1500, ' km/h']] },
+    amount: { on: true, name: 'Unusual amount', x: 6, floor: 5000, desc: 'A payment many times bigger than this account usually sends, and above a floor so small payments don\'t trigger it.', param: [['x', 'Times typical', 3, 15, '×'], ['floor', 'And above', 1000, 20000, '', 1000]] },
+    cycle: { on: true, name: 'Money going round', win: 60, desc: 'Money that leaves an account and comes back to it through other accounts. A classic layering pattern. Only personal accounts count, since shops, suppliers and payroll naturally form loops.', param: [['win', 'Within', 15, 180, ' min']] },
+    fanin: { on: true, name: 'Fan-in', n: 6, win: 30, desc: 'Many different people paying one personal account in a short time. Common for money-mule accounts in scams. Merchants are left out, since that is their job.', param: [['n', 'Senders', 3, 12, ''], ['win', 'Within', 10, 120, ' min']] }
+  };
+  var hits = { velocity: 0, travel: 0, amount: 0, cycle: 0, fanin: 0 };
+
+  /* ---------- state ---------- */
+  var S;
+  function newState() {
+    S = { t: 8 * 3600 * 1000, accts: [], byId: {}, txs: [], edges: [], cases: [], queue: [], nTx: 0, vol: 0, nAl: 0, txSeq: 1, caseSeq: 101, acc: 0, sel: null, qf: 'open', right: 0, wrong: 0 };
+    for (var i = 0; i < 110; i++) mkAcct('personal');
+    for (i = 0; i < 34; i++) mkAcct('merchant');
+    for (i = 0; i < 12; i++) mkAcct('business');
+  }
+  function mkAcct(kind, city) {
+    var n, id;
+    do { n = Math.floor(rnd(1000, 9999)); id = 'A' + n; } while (S.byId[id]);
+    city = city || pick(CW);
+    var a = { id: id, kind: kind, city: city, label: kind === 'personal' ? 'Personal ···' + n : kind === 'merchant' ? pick(MERCH) + ', ' + city : pick(BIZ) + ', ' + city,
+      typ: kind === 'personal' ? logn(420, .5) : kind === 'merchant' ? logn(6000, .5) : logn(15000, .4), hist: [], out: [], inn: [], lastCard: null, seen: -1e12, x: 0, y: 0, vx: 0, vy: 0, placed: false, mule: false };
+    S.accts.push(a); S.byId[id] = a; return a;
+  }
+  function anyOf(kind, notId, city) {
+    var c = S.accts.filter(function (a) { return a.kind === kind && !a.mule && a.id !== notId && (!city || a.city === city); });
+    if (!c.length) c = S.accts.filter(function (a) { return a.kind === kind && !a.mule && a.id !== notId; });
+    return pick(c);
+  }
+
+  /* ---------- organic payments ---------- */
+  function organic() {
+    var r = Math.random(), from, to, rail, amt, city, ref, big = false;
+    if (r < .78) {
+      from = anyOf('personal');
+      var q = Math.random();
+      if (q < .55) {
+        rail = 'card'; city = Math.random() < .015 && NEAR[from.city] ? pick(NEAR[from.city]) : from.city;
+        to = anyOf('merchant', null, city); amt = logn(from.typ * .8, .7); ref = pick(REF_CARD);
+      } else if (q < .82) {
+        rail = 'payshap'; to = Math.random() < .7 ? anyOf('personal', from.id) : anyOf('merchant'); amt = logn(from.typ * 1.1, .7); ref = pick(REF_PS); city = from.city;
+      } else {
+        rail = 'eft'; to = Math.random() < .6 ? anyOf('business') : anyOf('personal', from.id); amt = logn(from.typ * 4, .6); ref = pick(REF_EFT); city = from.city;
+      }
+      if (Math.random() < .012) { amt = from.typ * rnd(9, 22); rail = 'eft'; to = anyOf('business'); ref = pick(['Deposit flat', 'Car deposit', 'Wedding venue', 'Funeral costs', 'University fees']); big = true; }
+    } else if (r < .93) {
+      from = anyOf('merchant'); rail = 'eft'; to = anyOf('business'); amt = logn(from.typ * 2, .6); ref = 'Stock ' + pick(['order', 'invoice', 'top-up']); city = from.city;
+    } else {
+      from = anyOf('business'); rail = 'eft'; to = Math.random() < .6 ? anyOf('personal') : anyOf('business', from.id); amt = logn(from.typ, .5); ref = to.kind === 'personal' ? 'Salary' : 'Invoice ' + Math.floor(rnd(1000, 9999)); city = from.city;
+    }
+    amt = Math.max(15, Math.round(amt / 5) * 5);
+    pay(from, to, rail, amt, city, ref, big ? 'context' : 'normal');
+  }
+
+  /* ---------- scripted attacks ---------- */
+  function schedule(dtMin, fn) { S.queue.push({ at: S.t + dtMin * MIN, fn: fn }); }
+  function injectRing() {
+    var hub = pick(CW.slice(0, 10));
+    var m = [mkAcct('personal', hub), mkAcct('personal', pick(CW)), mkAcct('personal', pick(CW)), mkAcct('personal', hub)];
+    m.forEach(function (a) { a.mule = true; a.typ = logn(350, .3); for (var i = 0; i < 6; i++) a.hist.push(logn(a.typ, .4)); });
+    var victims = S.accts.filter(function (a) { return a.kind === 'personal' && !a.mule; }).sort(function () { return Math.random() - .5; }).slice(0, 8);
+    var total = 0;
+    victims.forEach(function (v, i) {
+      var amt = Math.round(rnd(1400, 4800) / 10) * 10; total += amt;
+      schedule(i * rnd(.8, 1.6) + .2, function () { pay(v, m[0], 'payshap', amt, v.city, pick(SCAM), 'fraud'); });
+    });
+    var t0 = 14, slice = Math.round(total * .92 / 10) * 10;
+    schedule(t0, function () { pay(m[0], m[1], 'eft', slice, m[0].city, 'Loan', 'fraud'); });
+    schedule(t0 + 4, function () { pay(m[1], m[2], 'payshap', slice - 400, m[1].city, 'Business', 'fraud'); });
+    schedule(t0 + 9, function () { pay(m[2], m[3], 'eft', slice - 900, m[2].city, 'Payment', 'fraud'); });
+    schedule(t0 + 13, function () { pay(m[3], m[0], 'eft', slice - 1500, m[3].city, 'Refund', 'fraud'); });
+    toast('Fraud ring injected: 4 mule accounts, 8 scam victims. Watch the next ~30 simulated minutes.');
+  }
+  function injectClone() {
+    var v = S.accts.filter(function (a) { return a.kind === 'personal' && !a.mule && a.city !== 'Cape Town' && a.hist.length > 4; });
+    v = v.length ? pick(v) : anyOf('personal');
+    var far = v.city === 'Durban' ? 'Cape Town' : pick(['Cape Town', 'Durban', 'George']);
+    if (far === v.city) far = 'Cape Town';
+    schedule(.2, function () { pay(v, anyOf('merchant', null, v.city), 'card', Math.round(logn(v.typ, .3)), v.city, 'Chip & PIN', 'normal'); });
+    var items = [['Electronics store', 8999], ['Fuel station', 1450], ['Liquor store', 2300], ['Clothing store', 3600], ['Electronics store', 6499], ['Supermarket', 2900]];
+    items.forEach(function (it, i) {
+      schedule(9 + i * 1.1, function () {
+        var mer = S.accts.filter(function (a) { return a.kind === 'merchant' && a.city === far; });
+        mer = mer.length ? pick(mer) : anyOf('merchant');
+        pay(v, mer, 'card', it[1] + Math.round(rnd(-200, 200)), far, 'Contactless', 'fraud');
+      });
+    });
+    toast('Cloned card injected: ' + v.label + ' (' + v.city + ') will be used in ' + far + ' minutes later.');
+  }
+
+  /* ---------- the engine ---------- */
+  function pay(from, to, rail, amt, city, ref, truth) {
+    var tx = { id: 'T' + (S.txSeq++), t: S.t, rail: rail, from: from.id, to: to.id, amt: amt, city: city, ref: ref, truth: truth, flags: [] };
+    var prevCard = from.lastCard, typ = median(from.hist);
+    S.txs.push(tx); if (S.txs.length > 3000) S.txs.splice(0, 500);
+    S.nTx++; S.vol += amt;
+    from.out.push(tx); to.inn.push(tx);
+    trim(from.out, 120); trim(to.inn, 120);
+    from.seen = to.seen = S.t;
+    var e = { from: from.id, to: to.id, t: S.t, tx: tx, hot: 0 }; S.edges.push(e);
+
+    /* per-payment rules */
+    if (RULES.velocity.on && from.kind === 'personal') {
+      var w = S.t - RULES.velocity.win * MIN, recent = from.out.filter(function (x) { return x.t >= w; });
+      if (recent.length >= RULES.velocity.n) alert('velocity', from, recent, { n: recent.length, win: RULES.velocity.win });
+    }
+    if (rail === 'card' && RULES.travel.on && prevCard && prevCard.city !== city) {
+      var d = km(prevCard.city, city), hrs = Math.max((S.t - prevCard.t) / 3600000, 1 / 120), sp = d / hrs;
+      if (sp > RULES.travel.kmh) alert('travel', from, [prevCard.tx, tx], { a: prevCard.city, b: city, km: d, min: (S.t - prevCard.t) / MIN, kmh: sp });
+    }
+    if (RULES.amount.on && from.hist.length >= 5 && amt >= RULES.amount.floor && amt > typ * RULES.amount.x)
+      alert('amount', from, [tx], { amt: amt, typ: typ, x: amt / typ });
+    if (rail === 'card') from.lastCard = { t: S.t, city: city, tx: tx };
+    from.hist.push(amt); trim(from.hist, 40);
+
+    /* network rules */
+    if (RULES.fanin.on && to.kind === 'personal') {
+      var fw = S.t - RULES.fanin.win * MIN, inc = to.inn.filter(function (x) { return x.t >= fw; }), snd = {};
+      inc.forEach(function (x) { snd[x.from] = 1; });
+      var ns = Object.keys(snd).length;
+      if (ns >= RULES.fanin.n) { alert('fanin', to, inc, { n: ns, win: RULES.fanin.win }); S.edges.forEach(function (ed) { if (ed.to === to.id && ed.t >= fw) ed.hot = 1; }); }
+    }
+    if (RULES.cycle.on && from.kind === 'personal' && to.kind === 'personal') {
+      var path = findCycle(to.id, from.id, S.t - RULES.cycle.win * MIN, S.t);
+      if (path) {
+        var ctx = path.concat([tx]), ids = ctx.map(function (x) { return x.from; });
+        alert('cycle', to, ctx, { hops: ctx.length, ids: ids, min: (S.t - ctx[0].t) / MIN });
+        ctx.forEach(function (x) { S.edges.forEach(function (ed) { if (ed.tx === x) ed.hot = 2; }); });
+      }
+    }
+    feed(tx);
+    return tx;
+  }
+  function trim(a, n) { if (a.length > n) a.splice(0, a.length - n); }
+  function median(a) { if (!a.length) return 0; var b = a.slice().sort(function (x, y) { return x - y; }); return b[Math.floor(b.length / 2)]; }
+  /* path start -> ... -> end with non-decreasing times inside [lo, hi], max 4 hops; returns tx list */
+  function findCycle(start, end, lo, hi) {
+    if (start === end) return null;
+    var best = null;
+    (function dfs(node, tmin, path, seen) {
+      if (best || path.length > 4) return;
+      var a = S.byId[node]; if (!a) return;
+      for (var i = 0; i < a.out.length; i++) {
+        var x = a.out[i];
+        if (x.t < lo || x.t < tmin || x.t > hi || seen[x.to]) continue;
+        if (x.amt < 500 || S.byId[x.to].kind !== 'personal') continue;
+        var p = path.concat([x]);
+        if (x.to === end) { if (p.length >= 2) { best = p; return; } continue; }
+        seen[x.to] = 1; dfs(x.to, x.t, p, seen); seen[x.to] = 0;
+        if (best) return;
+      }
+    })(start, lo, [], (function () { var o = {}; o[start] = 1; return o; })());
+    return best;
+  }
+
+  /* ---------- alerts and cases ---------- */
+  var TITLE = { velocity: 'Rapid-fire payments', travel: 'Impossible travel on card', amount: 'Unusual amount', cycle: 'Money going round in a circle', fanin: 'Many senders into one account' };
+  function alert(rule, acct, txs, info) {
+    S.nAl++; hits[rule]++;
+    txs.forEach(function (x) { if (x.flags.indexOf(rule) < 0) x.flags.push(rule); markFeed(x); });
+    var c = S.cases.filter(function (k) { return k.rule === rule && k.acct === acct.id && k.status === 'open'; })[0];
+    if (c) {
+      txs.forEach(function (x) { if (c.txs.indexOf(x) < 0) c.txs.push(x); });
+      c.info = info; c.updated = S.t; c.hitsN++;
+    } else {
+      c = { id: 'C-' + (S.caseSeq++), rule: rule, acct: acct.id, txs: txs.slice(), info: info, opened: S.t, updated: S.t, status: 'open', hitsN: 1, decision: null };
+      S.cases.unshift(c);
+      if (S.cases.length > 250) S.cases.length = 250;
+    }
+    c.truth = c.txs.some(function (x) { return x.truth === 'fraud'; }) ? 'fraud' : 'normal';
+    c.sev = severity(c);
+    drawRuleHits(); drawQueue();
+    if (S.sel === c) drawDetail();
+  }
+  function severity(c) {
+    var sum = c.txs.reduce(function (s, x) { return s + x.amt; }, 0);
+    if (c.rule === 'cycle' || c.rule === 'fanin') return sum > 8000 ? 'high' : 'med';
+    if (c.rule === 'travel') return c.txs.length > 3 || sum > 5000 ? 'high' : 'med';
+    if (c.rule === 'velocity') return sum > 6000 ? 'high' : c.txs.length > 6 ? 'med' : 'low';
+    return sum > 25000 ? 'med' : 'low';
+  }
+
+  /* ---------- feed ---------- */
+  var feedEl = $('feed'), feedRows = {};
+  function nm(id) { var a = S.byId[id]; return a ? a.label : id; }
+  function feed(tx) {
+    var d = document.createElement('div');
+    d.className = 'tx' + (tx.flags.length ? ' hit' : '');
+    d.innerHTML = '<span class="t">' + clock(tx.t) + '</span><span class="rail ' + tx.rail + '">' + (tx.rail === 'payshap' ? 'PayShap' : tx.rail.toUpperCase()) + '</span>' +
+      '<span class="who">' + esc(nm(tx.from)) + ' → ' + esc(nm(tx.to)) + '<small>' + esc(tx.city) + ' · ' + esc(tx.ref) + '</small></span><span class="amt">' + R(tx.amt) + '</span>' +
+      '<span class="tags"></span>';
+    feedEl.insertBefore(d, feedEl.firstChild);
+    feedRows[tx.id] = d; tx._row = d; paintTags(tx);
+    while (feedEl.children.length > 16) { var l = feedEl.lastChild; feedEl.removeChild(l); }
+  }
+  function paintTags(tx) {
+    if (!tx._row) return;
+    var tg = tx._row.querySelector('.tags');
+    tg.innerHTML = tx.flags.map(function (f) { return '<span class="tag">⚑ ' + esc(RULES[f].name) + '</span>'; }).join('');
+    tg.style.display = tx.flags.length ? 'flex' : 'none';
+    if (tx.flags.length) tx._row.classList.add('hit');
+  }
+  function markFeed(tx) { if (tx._row && tx._row.isConnected) paintTags(tx); }
+
+  /* ---------- queue + detail ---------- */
+  var qEl = $('queue');
+  function drawQueue() {
+    var list = S.cases.filter(function (c) { return S.qf === 'all' || (S.qf === 'open' ? c.status === 'open' : c.status !== 'open'); });
+    var open = S.cases.filter(function (c) { return c.status === 'open'; }).length;
+    $('qCount').textContent = open + ' open · ' + S.cases.length + ' total';
+    $('kCase').textContent = open;
+    var ord = { high: 0, med: 1, low: 2 };
+    if (S.qf === 'open') list.sort(function (a, b) { return ord[a.sev] - ord[b.sev] || b.updated - a.updated; });
+    qEl.innerHTML = list.length ? list.slice(0, 60).map(function (c) {
+      var a = S.byId[c.acct];
+      return '<button type="button" class="qi' + (c.status !== 'open' ? ' done' : '') + '" data-c="' + c.id + '" aria-current="' + (S.sel === c) + '"><b>' + esc(TITLE[c.rule]) + '</b><span class="sev ' + c.sev + '">' + c.sev.toUpperCase() + '</span>' +
+        '<small>' + c.id + ' · ' + esc(a ? a.label : c.acct) + ' · ' + c.txs.length + ' payment' + (c.txs.length > 1 ? 's' : '') + ' · ' + hm(c.opened) + (c.status !== 'open' ? ' · ' + (c.status === 'escalated' ? 'Escalated' : 'Closed') : '') + '</small></button>';
+    }).join('') : '<p class="note">' + (S.qf === 'open' ? 'No open cases. Quiet day, or try injecting a fraud ring.' : 'Nothing here yet.') + '</p>';
+  }
+  qEl.addEventListener('click', function (e) {
+    var b = e.target.closest('.qi'); if (!b) return;
+    S.sel = S.cases.filter(function (c) { return c.id === b.dataset.c; })[0] || null;
+    drawQueue(); drawDetail();
+  });
+  document.querySelectorAll('[data-q]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      S.qf = b.dataset.q;
+      document.querySelectorAll('[data-q]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+      drawQueue();
+    });
+  });
+
+  var LAW = {
+    fic: { st: 'force', stl: 'In force', t: 'FIC Act: suspicious and unusual transaction reports', p: 'Accountable institutions must report suspicious and unusual transactions to the Financial Intelligence Centre, keep records for at least five years, and run a board-approved Risk Management and Compliance Programme. Recent Prudential Authority fines on SA banks were mostly about late reports and programmes not followed.' },
+    payshap: { st: 'prog', stl: 'Programme, not yet law', t: 'PayShap liability and fraud model (SARB PEM)', p: 'The SARB planned to define a PayShap liability framework and fraud model in November 2026. Its draft Fraud Risk Framework had not been published publicly when we last checked (24 Nov 2026). Who carries the loss when a customer is tricked into paying a scammer is the open question.' },
+    eft: { st: 'force', stl: 'In force', t: 'SARB Directive 1 of 2022: EFT travel rule', p: 'Originator and beneficiary details must travel with electronic funds transfers. For domestic EFTs, full originator details must be producible within three business days. That is what lets an investigator follow money through several banks.' }
+  };
+  function lawsFor(c) {
+    var L = ['fic'];
+    if (c.txs.some(function (x) { return x.rail === 'payshap'; }) || c.rule === 'fanin') L.push('payshap');
+    if (c.rule === 'cycle' || c.txs.some(function (x) { return x.rail === 'eft'; })) L.push('eft');
+    return L;
+  }
+  function why(c) {
+    var i = c.info, a = S.byId[c.acct], out = [];
+    if (c.rule === 'velocity') { out.push(i.n + ' outgoing payments from one personal account within ' + i.win + ' minutes (rule: ' + RULES.velocity.n + ').'); out.push('Usual pattern for this account: about ' + R(median(a.hist)) + ' per payment.'); }
+    if (c.rule === 'travel') { out.push('Card used in ' + i.a + ', then in ' + i.b + ' ' + i.min.toFixed(0) + ' minutes later.'); out.push('That is ' + Math.round(i.km) + ' km, a speed of about ' + fmtR.format(Math.round(i.kmh)) + ' km/h (rule: over ' + RULES.travel.kmh + ' km/h).'); out.push('A passenger jet flies at roughly 800 to 900 km/h, before counting airport time.'); }
+    if (c.rule === 'amount') { out.push('A payment of ' + R(i.amt) + ', about ' + i.x.toFixed(1) + '× this account\'s typical ' + R(i.typ) + ' (rule: ' + RULES.amount.x + '× and above ' + R(RULES.amount.floor) + ').'); out.push('Check the reference and the recipient before deciding. Big one-off payments are often honest.'); }
+    if (c.rule === 'fanin') { out.push(i.n + ' different people paid this personal account within ' + i.win + ' minutes (rule: ' + RULES.fanin.n + ').'); out.push('Look at the references: do they read like real reasons, or like a scam script?'); }
+    if (c.rule === 'cycle') { out.push('Money left ' + esc(a.label) + ' and came back to it through ' + (i.hops - 1) + ' other account' + (i.hops > 2 ? 's' : '') + ' in ' + i.min.toFixed(0) + ' minutes.'); out.push('Each hop loses a little, which is typical of layering: making money harder to trace.'); }
+    var inflow = c.txs.filter(function (x) { return x.to === c.acct; }).reduce(function (s, x) { return s + x.amt; }, 0);
+    if (inflow && c.rule !== 'cycle') out.push('Money in on this case: ' + R(inflow) + '.');
+    return out;
+  }
+  function drawDetail() {
+    var el = $('detail'), c = S.sel;
+    if (!c) { el.innerHTML = '<div class="empty">Pick a case from the queue to investigate it.<br>Cases open by themselves as the rules fire.</div>'; return; }
+    var a = S.byId[c.acct];
+    var rows = c.txs.slice().sort(function (x, y) { return x.t - y.t; }).map(function (x) {
+      return '<tr><td>' + clock(x.t) + '</td><td>' + (x.rail === 'payshap' ? 'PayShap' : x.rail.toUpperCase()) + '</td><td>' + esc(nm(x.from)) + ' → ' + esc(nm(x.to)) + '</td><td>' + esc(x.city) + '</td><td>' + esc(x.ref) + '</td><td class="n">' + R(x.amt) + '</td></tr>';
+    }).join('');
+    var laws = lawsFor(c).map(function (k) { var l = LAW[k]; return '<div class="one"><span class="st ' + l.st + '">' + l.stl + '</span><b>' + esc(l.t) + '</b><p>' + esc(l.p) + '</p></div>'; }).join('');
+    var decided = c.status !== 'open';
+    el.innerHTML =
+      '<div class="dh"><div><h3>' + esc(TITLE[c.rule]) + '</h3><div class="meta">' + c.id + ' · opened ' + clock(c.opened) + ' · rule fired ' + c.hitsN + '× · ' + c.txs.length + ' payments · total ' + R(c.txs.reduce(function (s, x) { return s + x.amt; }, 0)) + '</div></div><span class="sev ' + c.sev + '">' + c.sev.toUpperCase() + ' PRIORITY</span></div>' +
+      '<div class="cols"><div class="box"><h4>Why it fired</h4><ul>' + why(c).map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul></div>' +
+      '<div class="box"><h4>Account</h4><p><b>' + esc(a.label) + '</b><br><span class="note">' + a.kind[0].toUpperCase() + a.kind.slice(1) + ' account · home city ' + esc(a.city) + ' · typical payment ' + R(median(a.hist) || a.typ) + ' · ' + a.hist.length + ' past payments seen</span></p>' +
+      '<p class="note">Synthetic account. In real life you would now check the customer\'s profile, device and contact history.</p></div></div>' +
+      '<div class="box" style="margin-top:14px"><h4>Evidence</h4><div class="tw"><table><thead><tr><th>Time</th><th>Rail</th><th>From → to</th><th>City</th><th>Reference</th><th style="text-align:right">Amount</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>' +
+      '<div class="box law" style="margin-top:14px"><h4>Related rules in South Africa</h4>' + laws + '<p class="note" style="margin-top:8px">Readiness information, not legal advice. <a href="/#radar">See all rules on the radar</a>.</p></div>' +
+      (decided ? '' : '<div class="acts"><button class="btn warn" type="button" id="esc">Escalate: suspicious</button><button class="btn" type="button" id="cls">Close: looks normal</button></div>') +
+      '<div class="str" id="str"></div><div class="outcome" id="outc"></div>';
+    if (!decided) {
+      $('esc').onclick = function () { decide(c, 'escalated'); };
+      $('cls').onclick = function () { decide(c, 'closed'); };
+    } else showOutcome(c);
+  }
+  function decide(c, how) {
+    c.status = how; c.decision = how; c.decidedAt = S.t;
+    var ok = (how === 'escalated') === (c.truth === 'fraud');
+    if (ok) S.right++; else S.wrong++;
+    drawQueue(); drawDetail(); drawScore();
+  }
+  function showOutcome(c) {
+    var ok = (c.status === 'escalated') === (c.truth === 'fraud'), o = $('outc');
+    var truthTxt = c.truth === 'fraud' ? 'This case included injected fraud.' : 'This was normal activity: a false positive.';
+    var lesson = c.truth === 'fraud'
+      ? (ok ? 'Good catch. Escalating sends it to the compliance officer, who decides whether to file a report.' : 'Missed. The money has likely moved on by now. Look again at the references and timing.')
+      : (ok ? 'Right call. Closing honest cases quickly keeps the queue clear and customers happy.' : 'Over-cautious. Escalating honest customers costs analyst time and can freeze someone\'s rent. If this happens a lot, the rule may be too tight.');
+    o.className = 'outcome show ' + (ok ? 'good' : 'bad');
+    o.innerHTML = '<b>' + (c.status === 'escalated' ? 'You escalated it. ' : 'You closed it. ') + truthTxt + '</b><br>' + lesson;
+    if (c.status === 'escalated') {
+      var s = $('str'), a = S.byId[c.acct];
+      s.className = 'str show';
+      s.textContent = 'DRAFT ESCALATION NOTE (illustration only)\n' +
+        'Case ' + c.id + ' · ' + TITLE[c.rule] + '\n' +
+        'Subject account: ' + a.label + ' (' + a.city + ')\n' +
+        'Payments: ' + c.txs.length + ', total ' + R(c.txs.reduce(function (s2, x) { return s2 + x.amt; }, 0)) + ', ' + hm(c.txs[0].t) + ' to ' + hm(c.txs[c.txs.length - 1].t) + '\n' +
+        'Grounds: ' + why(c)[0].replace(/<[^>]+>/g, '') + '\n' +
+        'Next: compliance officer reviews and decides whether a report to the FIC is required.\n' +
+        'Real reports are filed by the accountable institution itself, through the FIC\'s systems.';
+    }
+  }
+  function drawScore() {
+    var n = S.right + S.wrong;
+    $('score').innerHTML = n ? 'Your decisions: <b>' + S.right + ' of ' + n + '</b> right (' + Math.round(S.right / n * 100) + '%).' : 'No decisions yet. Tip: press <b>Inject a fraud ring</b>, then open the red case.';
+  }
+
+  /* ---------- rule cards ---------- */
+  function drawRules() {
+    $('rset').innerHTML = Object.keys(RULES).map(function (k) {
+      var r = RULES[k];
+      return '<div class="rs"><div class="top"><b>' + esc(r.name) + '</b><span class="sw"><input type="checkbox" data-k="' + k + '" ' + (r.on ? 'checked' : '') + ' aria-label="Turn ' + esc(r.name) + ' rule on or off"><span></span></span></div><p>' + esc(r.desc) + '</p>' +
+        r.param.map(function (p) { return '<label>' + p[1] + ' <output id="o_' + k + p[0] + '">' + fmt(r[p[0]], p) + '</output><input type="range" min="' + p[2] + '" max="' + p[3] + '" step="' + (p[5] || (p[3] > 100 ? 50 : 1)) + '" value="' + r[p[0]] + '" data-k="' + k + '" data-p="' + p[0] + '" aria-label="' + esc(r.name + ': ' + p[1]) + '"></label>'; }).join('') +
+        '<span class="hits" id="h_' + k + '">Fired 0×</span></div>';
+    }).join('');
+  }
+  function fmt(v, p) { return (p[0] === 'floor' ? R(v) : fmtR.format(v)) + p[4]; }
+  function drawRuleHits() { Object.keys(hits).forEach(function (k) { var e = $('h_' + k); if (e) e.textContent = 'Fired ' + hits[k] + '×'; }); $('kAl').textContent = fmtR.format(S.nAl); }
+  $('rset').addEventListener('input', function (e) {
+    var t = e.target, k = t.dataset.k; if (!k) return;
+    if (t.type === 'checkbox') RULES[k].on = t.checked;
+    else { var p = RULES[k].param.filter(function (x) { return x[0] === t.dataset.p; })[0]; RULES[k][p[0]] = +t.value; $('o_' + k + p[0]).textContent = fmt(+t.value, p); }
+  });
+
+  /* ---------- graph ---------- */
+  var cv = $('graph'), g = cv.getContext('2d'), GW = 0, GH = 0, DPR = 1, hover = null;
+  function size() { var r = cv.getBoundingClientRect(); DPR = Math.min(window.devicePixelRatio || 1, 2); GW = r.width; GH = r.height; cv.width = GW * DPR; cv.height = GH * DPR; g.setTransform(DPR, 0, 0, DPR, 0, 0); }
+  window.addEventListener('resize', size);
+  var COL = { personal: '#3fbf95', merchant: '#7cb8ff', business: '#d7a8ff' };
+  function openCaseFor(id) { return S.cases.filter(function (c) { return c.status === 'open' && (c.acct === id || c.txs.some(function (x) { return x.from === id || x.to === id; })); })[0]; }
+  function activeNodes() {
+    var lo = S.t - 45 * MIN;
+    return S.accts.filter(function (a) { return a.seen >= lo || (a.mule && a.seen > 0 && openCaseFor(a.id)); });
+  }
+  function stepGraph(nodes, edges) {
+    var cx = GW / 2, cy = GH / 2, i, j, a, b;
+    nodes.forEach(function (n) {
+      if (!n.placed) { var an = Math.random() * 6.283, rr = Math.min(GW, GH) * rnd(.15, .4); n.x = cx + Math.cos(an) * rr; n.y = cy + Math.sin(an) * rr; n.vx = n.vy = 0; n.placed = true; }
+    });
+    var k = Math.sqrt(GW * GH / Math.max(nodes.length, 1)) * .55;
+    for (i = 0; i < nodes.length; i++) for (j = i + 1; j < nodes.length; j++) {
+      a = nodes[i]; b = nodes[j];
+      var dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy + .01, f = k * k / d2 * .06;
+      if (d2 > 40000) continue;
+      a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f;
+    }
+    edges.forEach(function (e) {
+      a = S.byId[e.from]; b = S.byId[e.to]; if (!a.placed || !b.placed) return;
+      var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) + .01, f = (d - k) * .004;
+      a.vx += dx / d * f * d * .02; a.vy += dy / d * f * d * .02; b.vx -= dx / d * f * d * .02; b.vy -= dy / d * f * d * .02;
+    });
+    nodes.forEach(function (n) {
+      n.vx += (cx - n.x) * .0009; n.vy += (cy - n.y) * .0012;
+      n.vx *= .82; n.vy *= .82;
+      n.x += Math.max(-4, Math.min(4, n.vx)); n.y += Math.max(-4, Math.min(4, n.vy));
+      n.x = Math.max(12, Math.min(GW - 12, n.x)); n.y = Math.max(12, Math.min(GH - 12, n.y));
+    });
+  }
+  function drawGraph() {
+    if (!GW) size();
+    var lo = S.t - 45 * MIN;
+    S.edges = S.edges.filter(function (e) { return e.t >= lo - 30 * MIN || (e.hot && openCaseFor(e.from)); });
+    var edges = S.edges.filter(function (e) { return e.t >= lo || e.hot; }), nodes = activeNodes();
+    stepGraph(nodes, edges);
+    g.clearRect(0, 0, GW, GH);
+    edges.forEach(function (e) {
+      var a = S.byId[e.from], b = S.byId[e.to]; if (!a.placed || !b.placed) return;
+      var age = Math.max(0, Math.min(1, (S.t - e.t) / (45 * MIN)));
+      g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y);
+      if (e.hot) { g.strokeStyle = 'rgba(240,180,41,' + (.95 - age * .4) + ')'; g.lineWidth = 2.2; }
+      else if (e.tx.flags.length) { g.strokeStyle = 'rgba(255,122,107,' + (.8 - age * .5) + ')'; g.lineWidth = 1.6; }
+      else { g.strokeStyle = 'rgba(95,245,189,' + (.32 - age * .26) + ')'; g.lineWidth = 1; }
+      g.stroke();
+      if (S.t - e.t < 1.2 * MIN && !reduce) {
+        var p = (S.t - e.t) / (1.2 * MIN);
+        g.beginPath(); g.arc(a.x + (b.x - a.x) * p, a.y + (b.y - a.y) * p, 2.4, 0, 6.283); g.fillStyle = e.hot ? '#f0b429' : '#5ff5bd'; g.fill();
+      }
+    });
+    var tnow = performance.now() / 1000;
+    nodes.forEach(function (n) {
+      var deg = n.inn.length + n.out.length, r = 3 + Math.min(6, Math.sqrt(deg) * .7), oc = openCaseFor(n.id);
+      if (oc) {
+        g.beginPath(); g.arc(n.x, n.y, r + 5 + (reduce ? 0 : Math.sin(tnow * 4) * 2), 0, 6.283);
+        g.fillStyle = 'rgba(255,122,107,.22)'; g.fill();
+      }
+      g.beginPath(); g.arc(n.x, n.y, r, 0, 6.283);
+      g.fillStyle = oc ? '#ff7a6b' : COL[n.kind]; g.globalAlpha = Math.max(.35, 1 - (S.t - n.seen) / (60 * MIN)); g.fill(); g.globalAlpha = 1;
+      if (hover === n) { g.lineWidth = 2; g.strokeStyle = '#fff'; g.stroke(); }
+    });
+    S._nodes = nodes;
+  }
+  function nodeAt(x, y) { var best = null, bd = 196; (S._nodes || []).forEach(function (n) { var d = (n.x - x) * (n.x - x) + (n.y - y) * (n.y - y); if (d < bd) { bd = d; best = n; } }); return best; }
+  var tip = $('tip');
+  cv.addEventListener('mousemove', function (e) {
+    var r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, n = nodeAt(x, y);
+    hover = n;
+    if (!n) { tip.style.display = 'none'; cv.style.cursor = 'crosshair'; return; }
+    var oc = openCaseFor(n.id);
+    tip.innerHTML = '<b>' + esc(n.label) + '</b><br>' + n.kind + ' · ' + esc(n.city) + '<br>' + n.out.length + ' out · ' + n.inn.length + ' in' + (oc ? '<br><span style="color:#ff7a6b">Open case ' + oc.id + ' · click to open</span>' : '');
+    tip.style.display = 'block';
+    tip.style.left = Math.min(x + 14, GW - 250) + 'px'; tip.style.top = Math.min(y + 14, GH - 90) + 'px';
+    cv.style.cursor = oc ? 'pointer' : 'crosshair';
+  });
+  cv.addEventListener('mouseleave', function () { hover = null; tip.style.display = 'none'; });
+  cv.addEventListener('click', function (e) {
+    var r = cv.getBoundingClientRect(), n = nodeAt(e.clientX - r.left, e.clientY - r.top);
+    if (!n) return;
+    var oc = openCaseFor(n.id); if (!oc) return;
+    S.sel = oc; S.qf = 'open';
+    document.querySelectorAll('[data-q]').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.q === 'open'); });
+    drawQueue(); drawDetail();
+    $('detail').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  /* ---------- toast ---------- */
+  var toastEl = document.createElement('div');
+  toastEl.setAttribute('role', 'status');
+  toastEl.style.cssText = 'position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:50;background:rgba(5,11,9,.96);border:1px solid var(--gold);color:#ffe3a3;border-radius:12px;padding:12px 16px;font:500 14px/1.4 var(--mono);max-width:min(92vw,560px);box-shadow:0 20px 60px rgba(0,0,0,.5);display:none';
+  document.body.appendChild(toastEl);
+  var toastT;
+  function toast(m) { toastEl.textContent = m; toastEl.style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(function () { toastEl.style.display = 'none'; }, 5200); }
+
+  /* ---------- loop ---------- */
+  var paused = false, speed = 3, last = performance.now(), kpiT = 0;
+  function frame(now) {
+    var dt = Math.min(.1, (now - last) / 1000); last = now;
+    if (!paused) {
+      var simMs = dt * speed * 12000;
+      var end = S.t + simMs;
+      S.acc += dt * speed * 1.6;
+      var n = Math.floor(S.acc); S.acc -= n;
+      var stepT = simMs / (n + 1);
+      for (var i = 0; i < n; i++) { S.t += stepT; runQueue(); organic(); }
+      S.t = end; runQueue();
+    }
+    drawGraph();
+    kpiT += dt;
+    if (kpiT > .25) {
+      kpiT = 0;
+      $('clockT').textContent = clock(S.t);
+      $('kTx').textContent = fmtR.format(S.nTx); $('kVol').textContent = Rshort(S.vol);
+    }
+    requestAnimationFrame(frame);
+  }
+  function runQueue() {
+    S.queue.sort(function (a, b) { return a.at - b.at; });
+    while (S.queue.length && S.queue[0].at <= S.t) { var q = S.queue.shift(); q.fn(); }
+  }
+  function warm() {
+    /* give every account some payment history before the clock starts */
+    S.accts.forEach(function (a) { for (var i = 0; i < 8; i++) a.hist.push(Math.max(15, Math.round(logn(a.typ, .5)))); });
+  }
+
+  $('pause').onclick = function () {
+    paused = !paused; this.textContent = paused ? 'Play' : 'Pause'; this.setAttribute('aria-pressed', paused);
+    $('clock').classList.toggle('paused', paused);
+  };
+  $('speed').oninput = function () { speed = +this.value; $('speedO').textContent = speed + '×'; };
+  $('ring').onclick = injectRing;
+  $('clone').onclick = injectClone;
+  $('reset').onclick = function () { start(); toast('Reset. Fresh accounts, empty queue.'); };
+
+  function start() {
+    newState(); warm();
+    Object.keys(hits).forEach(function (k) { hits[k] = 0; });
+    feedEl.innerHTML = '';
+    drawRules(); drawRuleHits(); drawQueue(); drawDetail(); drawScore();
+  }
+  start();
+  if (reduce) { speed = 2; $('speed').value = 2; $('speedO').textContent = '2×'; }
+  requestAnimationFrame(function (t) { last = t; size(); frame(t); });
+})();
+</script>
+</body>
+</html>
