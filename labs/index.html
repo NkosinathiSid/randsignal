@@ -79,7 +79,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column}
 .ph{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .ph h3{font-size:19px}
-.ph span{font:500 12px/1.3 var(--mono);color:var(--muted)}
+.ph>span,.ph div>span{display:block;font:500 12px/1.3 var(--mono);color:var(--muted)}
 .feed{font:500 13px/1.3 var(--mono);display:grid;gap:4px;height:430px;overflow:hidden;align-content:start}
 .tx{display:grid;grid-template-columns:60px 66px minmax(0,1fr) 92px;gap:8px;align-items:center;padding:7px 8px;border-radius:9px;background:var(--bg2);border:1px solid transparent;animation:in .35s ease-out}
 @keyframes in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
@@ -95,7 +95,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .rail.payshap{color:var(--neon);border-color:rgba(95,245,189,.5)}
 .tags{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
 .tag{font:500 11px/1 var(--mono);padding:4px 7px;border-radius:6px;background:rgba(255,122,107,.16);color:#ffd2cc}
-.cvwrap{position:relative;height:430px;border-radius:12px;background:radial-gradient(circle at 50% 50%,rgba(63,191,149,.07),transparent 70%),var(--bg2);overflow:hidden}
+.cvwrap{position:relative;height:430px;border-radius:12px;background:radial-gradient(circle at 60% 40%,rgba(63,191,149,.08),transparent 70%),var(--bg2);overflow:hidden}
 #graph{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}
 #tip{position:absolute;pointer-events:none;background:rgba(5,11,9,.95);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:500 12px/1.4 var(--mono);color:var(--ink);display:none;max-width:240px;z-index:2}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font:500 12px var(--mono);color:var(--muted);margin-top:10px}
@@ -176,6 +176,7 @@ td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:14px;margin-top:24px}
 footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .sr{position:absolute;left:-9999px}
+[hidden]{display:none!important}
 @media(max-width:1000px){.grid,.cases{grid-template-columns:minmax(0,1fr)}.flow{grid-template-columns:minmax(0,1fr)}.fl:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-16px;transform:translateX(-50%)}.kpis{margin-left:0}}
 @media(max-width:700px){.cols{grid-template-columns:minmax(0,1fr)}.console{position:static}nav .hide{display:none}.feed,.cvwrap{height:360px}.tx{grid-template-columns:52px 60px minmax(0,1fr) 80px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
@@ -205,7 +206,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
       <h1 id="h1">Watch fraud rules fire on South African payments, <em>live.</em></h1>
       <p class="lede">This page makes up card, EFT and PayShap payments in your browser and runs them through five detection rules as they arrive. When a rule fires it opens a case. You play the investigator: read why it fired, then close it or escalate it. Every account, name and amount here is invented.</p>
       <div class="how">
-        <div><b><i>01</i>Payments stream in</b>Made-up payments across 14 SA cities, in rand, on three rails.</div>
+        <div><b><i>01</i>Payments stream in</b>Made-up payments across 14 SA cities, shown on a live map, in rand, on three rails.</div>
         <div><b><i>02</i>Rules check each one</b>Velocity, impossible travel and unusual amounts, per payment.</div>
         <div><b><i>03</i>The network is watched</b>Money going round in circles, and many people paying one account.</div>
         <div><b><i>04</i>You work the cases</b>Escalate or close. The demo then tells you what really happened.</div>
@@ -238,14 +239,22 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
           <div class="feed" id="feed" aria-live="off"></div>
         </div>
         <div class="panel">
-          <div class="ph"><h3>Money-movement network</h3><span>last 45 simulated minutes · hover a dot, click a red one</span></div>
-          <div class="cvwrap"><canvas id="graph" aria-label="Network graph of accounts and payments between them" role="img"></canvas><div id="tip"></div></div>
-          <div class="legend">
+          <div class="ph"><div><h3 id="vT">Where the money moves</h3><span id="vS">last 5 simulated minutes · red = a rule fired · click a pulsing city</span></div>
+            <div class="qtabs" role="group" aria-label="Choose view" style="margin:0"><button class="chip" type="button" data-v="map" aria-pressed="true">SA map</button><button class="chip" type="button" data-v="net" aria-pressed="false">Case links</button></div></div>
+          <div class="cvwrap"><canvas id="graph" aria-label="Map of South Africa showing payments moving between cities" role="img"></canvas><div id="tip"></div></div>
+          <div class="legend" id="legMap">
+            <span><i style="background:var(--blue)"></i>Card (ring = paid in that city)</span>
+            <span><i style="background:var(--violet)"></i>EFT</span>
+            <span><i style="background:var(--neon)"></i>PayShap</span>
+            <span><i style="background:var(--red);box-shadow:0 0 8px var(--red)"></i>Rule fired · pulse = open case</span>
+            <span>Dot size = money moved</span>
+          </div>
+          <div class="legend" id="legNet" hidden>
+            <span><i style="background:var(--red)"></i>Case subject (labelled)</span>
             <span><i style="background:var(--green)"></i>Personal</span>
             <span><i style="background:var(--blue)"></i>Merchant</span>
             <span><i style="background:var(--violet)"></i>Business</span>
-            <span><i style="background:var(--red);box-shadow:0 0 8px var(--red)"></i>In an open case</span>
-            <span><i style="background:var(--gold)"></i>Circle or fan-in edge</span>
+            <span><i style="background:var(--gold)"></i>Circle or fan-in payment</span>
           </div>
         </div>
       </div>
@@ -356,7 +365,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   /* ---------- state ---------- */
   var S;
   function newState() {
-    S = { t: 8 * 3600 * 1000, accts: [], byId: {}, txs: [], edges: [], cases: [], queue: [], nTx: 0, vol: 0, nAl: 0, txSeq: 1, caseSeq: 101, acc: 0, sel: null, qf: 'open', right: 0, wrong: 0 };
+    S = { t: 8 * 3600 * 1000, arcs: [], accts: [], byId: {}, txs: [], cases: [], queue: [], nTx: 0, vol: 0, nAl: 0, txSeq: 1, caseSeq: 101, acc: 0, sel: null, qf: 'open', right: 0, wrong: 0 };
     for (var i = 0; i < 110; i++) mkAcct('personal');
     for (i = 0; i < 34; i++) mkAcct('merchant');
     for (i = 0; i < 12; i++) mkAcct('business');
@@ -444,7 +453,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
     from.out.push(tx); to.inn.push(tx);
     trim(from.out, 120); trim(to.inn, 120);
     from.seen = to.seen = S.t;
-    var e = { from: from.id, to: to.id, t: S.t, tx: tx, hot: 0 }; S.edges.push(e);
 
     /* per-payment rules */
     if (RULES.velocity.on && from.kind === 'personal') {
@@ -465,16 +473,16 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
       var fw = S.t - RULES.fanin.win * MIN, inc = to.inn.filter(function (x) { return x.t >= fw; }), snd = {};
       inc.forEach(function (x) { snd[x.from] = 1; });
       var ns = Object.keys(snd).length;
-      if (ns >= RULES.fanin.n) { alert('fanin', to, inc, { n: ns, win: RULES.fanin.win }); S.edges.forEach(function (ed) { if (ed.to === to.id && ed.t >= fw) ed.hot = 1; }); }
+      if (ns >= RULES.fanin.n) { alert('fanin', to, inc, { n: ns, win: RULES.fanin.win }); }
     }
     if (RULES.cycle.on && from.kind === 'personal' && to.kind === 'personal') {
       var path = findCycle(to.id, from.id, S.t - RULES.cycle.win * MIN, S.t);
       if (path) {
         var ctx = path.concat([tx]), ids = ctx.map(function (x) { return x.from; });
         alert('cycle', to, ctx, { hops: ctx.length, ids: ids, min: (S.t - ctx[0].t) / MIN });
-        ctx.forEach(function (x) { S.edges.forEach(function (ed) { if (ed.tx === x) ed.hot = 2; }); });
       }
     }
+    cityPay(tx, rail === 'card' ? city : to.city);
     feed(tx);
     return tx;
   }
@@ -670,94 +678,186 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
     else { var p = RULES[k].param.filter(function (x) { return x[0] === t.dataset.p; })[0]; RULES[k][p[0]] = +t.value; $('o_' + k + p[0]).textContent = fmt(+t.value, p); }
   });
 
-  /* ---------- graph ---------- */
-  var cv = $('graph'), g = cv.getContext('2d'), GW = 0, GH = 0, DPR = 1, hover = null;
-  function size() { var r = cv.getBoundingClientRect(); DPR = Math.min(window.devicePixelRatio || 1, 2); GW = r.width; GH = r.height; cv.width = GW * DPR; cv.height = GH * DPR; g.setTransform(DPR, 0, 0, DPR, 0, 0); }
-  window.addEventListener('resize', size);
+  /* ---------- views: SA map + case links ---------- */
+  var cv = $('graph'), g = cv.getContext('2d'), GW = 0, GH = 0, DPR = 1, hover = null, view = 'map', base = null, P = null;
+  var BORDER = [[29.36,-22.19],[29.66,-22.15],[30.19,-22.29],[30.71,-22.3],[31.07,-22.31],[31.29,-22.4],[31.3,-22.48],[31.42,-22.82],[31.53,-23.28],[31.55,-23.48],[31.67,-23.67],[31.73,-23.79],[31.86,-24.04],[31.95,-24.33],[31.98,-24.46],[31.98,-24.84],[31.99,-25.26],[31.98,-25.63],[31.93,-25.88],[31.92,-25.97],[31.64,-25.87],[31.38,-25.74],[31.21,-25.84],[31.03,-26.1],[30.8,-26.41],[30.79,-26.61],[30.81,-26.79],[30.94,-26.92],[31.28,-27.24],[31.74,-27.31],[31.94,-27.17],[32,-26.82],[32.08,-26.82],[32.2,-26.83],[32.48,-26.86],[32.78,-26.85],[32.85,-27.08],[32.66,-27.61],[32.38,-28.5],[32.03,-28.84],[31.89,-28.91],[31.34,-29.38],[31.02,-29.9],[30.66,-30.43],[30.29,-30.97],[29.83,-31.42],[29.48,-31.67],[28.86,-32.29],[28.22,-32.77],[27.76,-33.1],[27.08,-33.52],[26.43,-33.76],[25.81,-33.74],[25.64,-34.01],[25.48,-34.03],[25,-33.97],[24.83,-34.17],[24.18,-34.06],[23.59,-33.99],[23.27,-34.08],[22.74,-34.01],[22.42,-34.05],[21.79,-34.37],[21.35,-34.41],[21.06,-34.37],[20.88,-34.39],[20.53,-34.46],[20.02,-34.79],[19.85,-34.76],[19.39,-34.6],[19.32,-34.57],[19.28,-34.44],[19.15,-34.42],[18.95,-34.34],[18.83,-34.36],[18.83,-34.25],[18.81,-34.11],[18.71,-34.07],[18.53,-34.09],[18.46,-34.17],[18.41,-34.3],[18.33,-34.07],[18.47,-33.89],[18.43,-33.72],[18.26,-33.42],[18.07,-33.21],[17.96,-33.05],[17.85,-32.83],[17.97,-32.71],[18.12,-32.75],[18.33,-32.5],[18.31,-32.12],[18.16,-31.66],[17.68,-31.02],[17.19,-30.1],[16.74,-29.01],[16.45,-28.62],[16.63,-28.49],[16.72,-28.48],[16.79,-28.4],[16.81,-28.26],[16.88,-28.13],[17.06,-28.03],[17.19,-28.13],[17.25,-28.23],[17.36,-28.27],[17.38,-28.41],[17.35,-28.5],[17.42,-28.62],[17.62,-28.74],[17.84,-28.78],[18.1,-28.87],[18.6,-28.86],[19.02,-28.93],[19.25,-28.9],[19.27,-28.78],[19.41,-28.71],[19.54,-28.57],[19.88,-28.45],[19.98,-28.31],[19.98,-27.42],[19.98,-26.53],[19.98,-25.64],[19.98,-24.78],[20.35,-25.03],[20.47,-25.22],[20.71,-25.73],[20.8,-26],[20.82,-26.12],[20.76,-26.26],[20.63,-26.44],[20.64,-26.74],[20.74,-26.85],[20.95,-26.82],[21.45,-26.83],[21.65,-26.85],[21.74,-26.81],[21.83,-26.68],[22.01,-26.64],[22.22,-26.39],[22.55,-26.18],[22.64,-26.07],[22.8,-25.68],[22.88,-25.46],[23.02,-25.32],[23.15,-25.29],[23.39,-25.29],[23.67,-25.43],[23.9,-25.6],[24.1,-25.63],[24.33,-25.74],[24.56,-25.78],[24.87,-25.81],[25.09,-25.75],[25.35,-25.74],[25.52,-25.66],[25.66,-25.44],[25.77,-25.15],[25.88,-24.79],[26.03,-24.7],[26.4,-24.61],[26.5,-24.51],[26.76,-24.3],[26.97,-23.76],[27.08,-23.58],[27.19,-23.52],[27.31,-23.43],[27.5,-23.37],[27.59,-23.25],[27.72,-23.22],[27.77,-23.15],[27.89,-23.07],[27.93,-22.99],[28.21,-22.69],[28.54,-22.57],[28.84,-22.48],[29.01,-22.28],[29.36,-22.19]];
+  var LESOTHO = [[28.74,-30.1],[28.63,-30.13],[28.5,-30.13],[28.39,-30.15],[28.18,-30.41],[28.13,-30.53],[28.06,-30.63],[27.9,-30.62],[27.67,-30.54],[27.55,-30.41],[27.49,-30.36],[27.41,-30.33],[27.37,-30.28],[27.35,-30.16],[27.24,-30.01],[27.13,-29.84],[27.05,-29.66],[27.1,-29.6],[27.29,-29.52],[27.42,-29.36],[27.49,-29.28],[27.59,-29.15],[27.74,-28.94],[27.96,-28.87],[28.23,-28.7],[28.58,-28.59],[28.65,-28.6],[28.72,-28.69],[28.86,-28.78],[29.06,-28.95],[29.26,-29.08],[29.33,-29.16],[29.39,-29.27],[29.35,-29.44],[29.25,-29.62],[29.14,-29.7],[29.1,-29.92],[28.97,-30],[28.74,-30.1]];
+  var NEIGH = {"NA":[[[23.38,-17.64],[23.8,-17.56],[24.23,-17.49],[24.73,-17.52],[25,-17.57],[25.26,-17.79],[24.91,-17.82],[24.53,-18.05],[24.41,-17.99],[24.24,-18.02],[24,-18.15],[23.86,-18.27],[23.65,-18.45],[23.58,-18.45],[23.46,-18.23],[23.25,-18.01],[23.1,-18.01],[22.46,-18.12],[21.53,-18.27],[20.98,-18.32],[20.98,-18.93],[20.98,-19.74],[20.98,-20.56],[20.98,-21.38],[20.98,-21.96],[20.82,-22],[20.21,-22],[19.98,-22.24],[19.98,-22.82],[19.98,-23.39],[19.98,-23.96],[19.98,-24.54],[19.98,-24.78],[19.98,-25.64],[19.98,-26.53],[19.98,-27.42],[19.98,-28.31],[19.88,-28.45],[19.54,-28.57],[19.41,-28.71],[19.27,-28.78],[19.25,-28.9],[19.02,-28.93],[18.6,-28.86],[18.1,-28.87],[17.84,-28.78],[17.62,-28.74],[17.42,-28.62],[17.35,-28.5],[17.38,-28.41],[17.36,-28.27],[17.25,-28.23],[17.19,-28.13],[17.06,-28.03],[16.88,-28.13],[16.81,-28.26],[16.79,-28.4],[16.72,-28.48],[16.63,-28.49],[16.45,-28.62],[16.01,-28.23],[15.72,-27.97],[15.29,-27.28],[15.13,-26.79],[15.16,-26.6],[15.1,-26.43],[14.93,-25.96],[14.86,-25.53],[14.82,-25.25],[14.77,-24.79],[14.5,-24.2],[14.5,-23.64],[14.47,-23.28],[14.4,-22.97],[14.46,-22.91],[14.52,-22.81],[14.46,-22.45],[13.97,-21.77],[13.84,-21.47],[13.29,-20.52],[13.04,-20.03],[12.33,-18.75],[12.04,-18.47],[11.78,-18],[11.72,-17.47],[11.9,-17.23],[12.12,-17.16],[12.32,-17.21],[12.55,-17.21],[12.79,-17.11],[12.96,-17.02],[13.18,-16.97],[13.4,-17.01],[13.56,-17.14],[13.79,-17.29],[13.94,-17.39],[14.02,-17.41],[14.42,-17.39],[15,-17.39],[15.77,-17.39],[16.53,-17.39],[17.3,-17.39],[17.84,-17.39],[18.4,-17.4],[18.46,-17.43],[18.59,-17.57],[18.83,-17.77],[19.07,-17.82],[19.38,-17.82],[19.91,-17.88],[20.39,-17.89],[20.63,-18],[20.91,-18.01],[21.29,-17.96],[21.42,-18],[21.96,-17.9],[22.62,-17.78],[23.38,-17.64]]],"BW":[[[25.26,-17.79],[25.22,-17.91],[25.28,-18.04],[25.39,-18.14],[25.49,-18.35],[25.76,-18.65],[25.81,-18.8],[25.96,-18.99],[26.08,-19.37],[26.24,-19.57],[26.68,-19.89],[27.09,-20.05],[27.22,-20.15],[27.28,-20.38],[27.47,-20.48],[27.68,-20.5],[27.69,-20.6],[27.7,-20.77],[27.68,-20.94],[27.69,-21.11],[27.91,-21.36],[28.01,-21.55],[28.18,-21.59],[28.75,-21.71],[28.99,-21.78],[29.04,-21.81],[29.02,-21.98],[29.07,-22.05],[29.24,-22.08],[29.36,-22.19],[29.01,-22.28],[28.84,-22.48],[28.54,-22.57],[28.21,-22.69],[27.93,-22.99],[27.89,-23.07],[27.77,-23.15],[27.72,-23.22],[27.59,-23.25],[27.5,-23.37],[27.31,-23.43],[27.19,-23.52],[27.08,-23.58],[26.97,-23.76],[26.76,-24.3],[26.5,-24.51],[26.4,-24.61],[26.03,-24.7],[25.88,-24.79],[25.77,-25.15],[25.66,-25.44],[25.52,-25.66],[25.35,-25.74],[25.09,-25.75],[24.87,-25.81],[24.56,-25.78],[24.33,-25.74],[24.1,-25.63],[23.9,-25.6],[23.67,-25.43],[23.39,-25.29],[23.15,-25.29],[23.02,-25.32],[22.88,-25.46],[22.8,-25.68],[22.64,-26.07],[22.55,-26.18],[22.22,-26.39],[22.01,-26.64],[21.83,-26.68],[21.74,-26.81],[21.65,-26.85],[21.45,-26.83],[20.95,-26.82],[20.74,-26.85],[20.64,-26.74],[20.63,-26.44],[20.76,-26.26],[20.82,-26.12],[20.8,-26],[20.71,-25.73],[20.47,-25.22],[20.35,-25.03],[19.98,-24.78],[19.98,-24.54],[19.98,-23.96],[19.98,-23.39],[19.98,-22.82],[19.98,-22.24],[20.21,-22],[20.82,-22],[20.98,-21.96],[20.98,-21.38],[20.98,-20.56],[20.98,-19.74],[20.98,-18.93],[20.98,-18.32],[21.53,-18.27],[22.46,-18.12],[23.1,-18.01],[23.25,-18.01],[23.46,-18.23],[23.58,-18.45],[23.65,-18.45],[23.86,-18.27],[24,-18.15],[24.24,-18.02],[24.41,-17.99],[24.53,-18.05],[24.91,-17.82],[25.26,-17.79]]],"ZW":[[[31.29,-22.4],[31.07,-22.31],[30.71,-22.3],[30.19,-22.29],[29.66,-22.15],[29.36,-22.19],[29.24,-22.08],[29.07,-22.05],[29.02,-21.98],[29.04,-21.81],[28.99,-21.78],[28.75,-21.71],[28.18,-21.59],[28.01,-21.55],[27.91,-21.36],[27.69,-21.11],[27.68,-20.94],[27.7,-20.77],[27.69,-20.6],[27.68,-20.5],[27.47,-20.48],[27.28,-20.38],[27.22,-20.15],[27.09,-20.05],[26.68,-19.89],[26.24,-19.57],[26.08,-19.37],[25.96,-18.99],[25.81,-18.8],[25.76,-18.65],[25.49,-18.35],[25.39,-18.14],[25.28,-18.04],[25.22,-17.91],[25.26,-17.79],[25.56,-17.85],[25.74,-17.86],[26,-17.97],[26.33,-17.93],[26.78,-18.04],[27.24,-17.73],[27.64,-17.26],[27.93,-16.9],[28.4,-16.66],[28.83,-16.42],[28.86,-16.14],[28.91,-15.99],[29.05,-15.9],[29.49,-15.7],[29.99,-15.64],[30.4,-15.64],[30.41,-15.98],[30.63,-16],[31.24,-16.02],[31.49,-16.18],[31.94,-16.43],[32.45,-16.52],[32.74,-16.68],[32.9,-16.7],[32.94,-16.78],[32.88,-17.04],[32.98,-17.44],[32.96,-18.08],[32.98,-18.27],[32.99,-18.36],[32.9,-18.63],[32.88,-18.73],[32.72,-18.83],[32.7,-18.94],[32.77,-19.02],[32.85,-19.1],[32.83,-19.24],[32.83,-19.56],[32.97,-19.8],[33,-19.93],[32.87,-20.22],[32.67,-20.52],[32.49,-20.66],[32.48,-20.83],[32.36,-21.14],[32.41,-21.31],[32.19,-21.52],[31.89,-21.83],[31.57,-22.15],[31.29,-22.4]]],"MZ":[[[31.29,-22.4],[31.57,-22.15],[31.89,-21.83],[32.19,-21.52],[32.41,-21.31],[32.36,-21.14],[32.48,-20.83],[32.49,-20.66],[32.67,-20.52],[32.87,-20.22],[33,-19.93],[32.97,-19.8],[32.83,-19.56],[32.83,-19.24],[32.85,-19.1],[32.77,-19.02],[32.7,-18.94],[32.72,-18.83],[32.88,-18.73],[32.9,-18.63],[32.99,-18.36],[32.98,-18.27],[32.96,-18.08],[32.98,-17.44],[32.88,-17.04],[32.94,-16.78],[32.9,-16.7],[32.74,-16.68],[32.45,-16.52],[31.94,-16.43],[31.49,-16.18],[31.24,-16.02],[30.63,-16],[30.41,-15.98],[30.4,-15.64],[30.35,-15.35],[30.25,-15.18],[30.22,-15.01],[30.45,-14.91],[30.67,-14.82],[31.13,-14.69],[31.54,-14.58],[31.73,-14.5],[32.05,-14.39],[32.27,-14.32],[32.87,-14.12],[33.2,-14.01],[33.39,-14.29],[33.64,-14.57],[33.69,-14.53],[33.97,-14.49],[34.1,-14.45],[34.33,-14.41],[34.5,-14.6],[34.55,-14.92],[34.55,-15.14],[34.44,-15.48],[34.36,-15.7],[34.25,-15.83],[34.29,-15.94],[34.4,-16.08],[34.4,-16.2],[34.44,-16.27],[34.61,-16.43],[34.93,-16.76],[35.08,-16.83],[35.09,-16.97],[35.07,-17.08],[35.12,-17.13],[35.27,-17.12],[35.28,-16.81],[35.18,-16.57],[35.18,-16.51],[35.29,-16.25],[35.36,-16.16],[35.71,-16.1],[35.79,-15.96],[35.83,-15.42],[35.84,-15.03],[35.87,-14.86],[35.69,-14.47],[35.38,-14.06],[35.01,-13.64],[34.85,-13.52],[34.61,-13.44],[34.54,-13.22],[34.52,-12.93],[34.46,-12.59],[34.36,-12.21],[34.37,-12.12],[34.53,-11.89],[34.61,-11.69],[34.66,-11.59],[34.96,-11.58],[35.42,-11.58],[35.51,-11.6],[35.63,-11.58],[35.79,-11.45],[36.08,-11.54],[36.19,-11.67],[36.52,-11.72],[36.77,-11.61],[36.98,-11.57],[37.11,-11.65],[37.37,-11.71],[37.73,-11.58],[37.86,-11.38],[37.92,-11.3],[38.18,-11.28],[38.49,-11.41],[38.8,-11.23],[39.17,-11.17],[39.44,-11.04],[39.7,-10.96],[39.99,-10.82],[40.35,-10.55],[40.52,-10.57],[40.56,-10.72],[40.6,-10.83],[40.51,-11],[40.55,-11.07],[40.42,-11.27],[40.47,-11.45],[40.5,-11.84],[40.53,-12],[40.51,-12.31],[40.49,-12.49],[40.58,-12.64],[40.55,-12.82],[40.43,-12.94],[40.57,-12.98],[40.56,-13.11],[40.55,-13.29],[40.55,-13.46],[40.56,-13.62],[40.6,-14.12],[40.65,-14.2],[40.71,-14.29],[40.64,-14.45],[40.73,-14.42],[40.82,-14.47],[40.83,-14.57],[40.84,-14.72],[40.78,-14.84],[40.69,-15.01],[40.64,-15.08],[40.65,-15.19],[40.56,-15.47],[40.21,-15.87],[40.11,-16.03],[39.98,-16.23],[39.79,-16.3],[39.76,-16.47],[39.24,-16.79],[39.08,-16.97],[38.89,-17.04],[38.71,-17.05],[38.63,-17.08],[38.14,-17.24],[38.05,-17.32],[37.51,-17.57],[37.05,-17.91],[36.94,-17.99],[36.9,-18.13],[36.54,-18.52],[36.41,-18.69],[36.33,-18.79],[36.24,-18.86],[36.12,-18.84],[35.85,-18.99],[35.36,-19.49],[34.89,-19.82],[34.72,-19.71],[34.71,-19.77],[34.75,-19.93],[34.7,-20.4],[34.76,-20.56],[34.98,-20.81],[35.13,-21.4],[35.27,-21.76],[35.33,-22.26],[35.38,-22.45],[35.4,-22.32],[35.45,-22.12],[35.51,-22.19],[35.54,-22.3],[35.49,-22.66],[35.57,-22.96],[35.38,-23.71],[35.4,-23.84],[35.48,-23.78],[35.54,-23.82],[35.44,-24.17],[35.16,-24.54],[34.61,-24.82],[33.53,-25.19],[32.96,-25.49],[32.72,-25.82],[32.59,-26],[32.7,-26.16],[32.81,-26.24],[32.9,-26.13],[32.96,-26.08],[32.89,-26.83],[32.78,-26.85],[32.48,-26.86],[32.2,-26.83],[32.11,-26.52],[32.05,-26.35],[32.06,-26.21],[32.06,-26.02],[31.95,-25.96],[31.92,-25.77],[31.98,-25.36],[31.98,-25.07],[31.98,-24.64],[31.97,-24.38],[31.91,-24.24],[31.8,-23.89],[31.7,-23.74],[31.6,-23.55],[31.53,-23.43],[31.47,-23.02],[31.35,-22.62],[31.29,-22.45]]],"SZ":[[[31.95,-25.96],[32.06,-26.02],[32.06,-26.21],[32.05,-26.35],[32.11,-26.52],[32.08,-26.82],[32,-26.82],[31.94,-27.17],[31.74,-27.31],[31.28,-27.24],[30.94,-26.92],[30.81,-26.79],[30.79,-26.61],[30.8,-26.41],[31.03,-26.1],[31.21,-25.84],[31.38,-25.74],[31.64,-25.87],[31.92,-25.97]]]};
+  var LBL = { 'Pretoria': [8, -6, 'left'], 'Johannesburg': [0, 18, 'center'], 'Pietermaritzburg': [0, -12, 'center'], 'Durban': [8, 10, 'left'], 'Rustenburg': [0, -12, 'center'], 'Mahikeng': [-8, 4, 'right'], 'George': [0, 18, 'center'], 'Cape Town': [0, 18, 'center'], 'Gqeberha': [0, 18, 'center'], 'East London': [8, 6, 'left'], 'Kimberley': [-8, 4, 'right'], 'Mbombela': [0, 18, 'center'] };
+  var BIG = { 'Pretoria': 1, 'Kimberley': 1, 'Johannesburg': 1, 'Cape Town': 1, 'Durban': 1, 'Gqeberha': 1, 'Bloemfontein': 1, 'Polokwane': 1, 'East London': 1 };
+  var RAILC = { card: '124,184,255', eft: '215,168,255', payshap: '95,245,189' };
   var COL = { personal: '#3fbf95', merchant: '#7cb8ff', business: '#d7a8ff' };
-  function openCaseFor(id) { return S.cases.filter(function (c) { return c.status === 'open' && (c.acct === id || c.txs.some(function (x) { return x.from === id || x.to === id; })); })[0]; }
-  function activeNodes() {
-    var lo = S.t - 45 * MIN;
-    return S.accts.filter(function (a) { return a.seen >= lo || (a.mule && a.seen > 0 && openCaseFor(a.id)); });
+  function proj(lon, lat) { return [P.ox + (lon * .875 - P.minx) * P.s, P.oy + (-lat - P.miny) * P.s]; }
+  function size() {
+    var r = cv.getBoundingClientRect(); DPR = Math.min(window.devicePixelRatio || 1, 2); GW = r.width; GH = r.height;
+    cv.width = GW * DPR; cv.height = GH * DPR; g.setTransform(DPR, 0, 0, DPR, 0, 0);
+    var xs = BORDER.map(function (p) { return p[0] * .875; }), ys = BORDER.map(function (p) { return -p[1]; });
+    var minx = Math.min.apply(0, xs), maxx = Math.max.apply(0, xs), miny = Math.min.apply(0, ys), maxy = Math.max.apply(0, ys), pad = 26;
+    var s = Math.min((GW - pad * 2) / (maxx - minx), (GH - pad * 2) / (maxy - miny));
+    P = { s: s, minx: minx, miny: miny, ox: (GW - (maxx - minx) * s) / 2, oy: (GH - (maxy - miny) * s) / 2 };
+    Object.keys(CITIES).forEach(function (c) { CITY[c].xy = proj(CITIES[c][1], CITIES[c][0]); });
+    base = document.createElement('canvas'); base.width = cv.width; base.height = cv.height;
+    var b = base.getContext('2d'); b.setTransform(DPR, 0, 0, DPR, 0, 0);
+    b.strokeStyle = 'rgba(95,245,189,.045)'; b.lineWidth = 1;
+    for (var lo = 16; lo <= 34; lo += 2) { var a1 = proj(lo, -21), a2 = proj(lo, -35.5); b.beginPath(); b.moveTo(a1[0], a1[1]); b.lineTo(a2[0], a2[1]); b.stroke(); }
+    for (var la = -22; la >= -35; la -= 2) { var c1 = proj(15.5, la), c2 = proj(33.5, la); b.beginPath(); b.moveTo(c1[0], c1[1]); b.lineTo(c2[0], c2[1]); b.stroke(); }
+    b.strokeStyle = 'rgba(164,189,178,.22)'; b.fillStyle = 'rgba(164,189,178,.025)'; b.lineWidth = 1;
+    Object.keys(NEIGH).forEach(function (k) { NEIGH[k].forEach(function (ring) { b.beginPath(); ring.forEach(function (p, i) { var q = proj(p[0], p[1]); if (i) b.lineTo(q[0], q[1]); else b.moveTo(q[0], q[1]); }); b.closePath(); b.fill(); b.stroke(); }); });
+    b.font = '500 10px "IBM Plex Mono",monospace'; b.fillStyle = 'rgba(164,189,178,.4)'; b.textAlign = 'center';
+    [['NAMIBIA', 17.4, -25.2], ['BOTSWANA', 23.6, -23.4], ['ZIMBABWE', 30.2, -21.2], ['MOZ.', 32.75, -24.2], ['ESWATINI', 31.5, -26.75], ['INDIAN OCEAN', 31.2, -33.6], ['ATLANTIC', 16.6, -32.6]].forEach(function (l) { var q = proj(l[1], l[2]); if (q[0] > 24 && q[0] < GW - 24 && q[1] > 10 && q[1] < GH - 6) b.fillText(l[0], q[0], q[1]); });
+    b.beginPath();
+    [BORDER, LESOTHO].forEach(function (poly) { poly.forEach(function (p, i) { var q = proj(p[0], p[1]); if (i) b.lineTo(q[0], q[1]); else b.moveTo(q[0], q[1]); }); b.closePath(); });
+    var gr = b.createLinearGradient(0, 0, GW, GH); gr.addColorStop(0, 'rgba(63,191,149,.10)'); gr.addColorStop(1, 'rgba(240,180,41,.05)');
+    b.fillStyle = gr; b.fill('evenodd');
+    b.strokeStyle = 'rgba(95,245,189,.45)'; b.lineWidth = 1.3; b.stroke();
+    b.font = '500 10px "IBM Plex Mono",monospace'; b.fillStyle = 'rgba(164,189,178,.45)'; b.textAlign = 'center';
+    var ls = proj(28.25, -29.6); b.fillText('LESOTHO', ls[0], ls[1] + 3);
   }
-  function stepGraph(nodes, edges) {
-    var cx = GW / 2, cy = GH / 2, i, j, a, b;
-    nodes.forEach(function (n) {
-      if (!n.placed) { var an = Math.random() * 6.283, rr = Math.min(GW, GH) * rnd(.15, .4); n.x = cx + Math.cos(an) * rr; n.y = cy + Math.sin(an) * rr; n.vx = n.vy = 0; n.placed = true; }
+  window.addEventListener('resize', function () { size(); });
+  var CITY = {};
+  Object.keys(CITIES).forEach(function (c) { CITY[c] = { v: 0, n: 0, xy: [0, 0] }; });
+  function cityPay(tx, toCity) {
+    var c = CITY[tx.city]; if (c) { c.v += tx.amt; c.n++; }
+    S.arcs.push({ a: tx.city, b: toCity, t: tx.t, tx: tx });
+    if (S.arcs.length > 900) S.arcs.splice(0, 300);
+  }
+  function caseCities(c) { var o = {}; c.txs.forEach(function (x) { o[x.city] = 1; }); return Object.keys(o); }
+  function openByCity() {
+    var m = {}; S.cases.forEach(function (c) { if (c.status !== 'open') return; caseCities(c).forEach(function (k) { (m[k] = m[k] || []).push(c); }); }); return m;
+  }
+  function openCaseFor(id) { return S.cases.filter(function (c) { return c.status === 'open' && (c.acct === id || c.txs.some(function (x) { return x.from === id || x.to === id; })); })[0]; }
+  var lastT = 0;
+  function drawMap() {
+    var dec = Math.exp(-Math.max(0, S.t - lastT) / (20 * MIN)); lastT = S.t;
+    Object.keys(CITY).forEach(function (k) { CITY[k].v *= dec; });
+    g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); g.drawImage(base, 0, 0); g.setTransform(DPR, 0, 0, DPR, 0, 0);
+    var tnow = performance.now() / 1000;
+    S.arcs = S.arcs.filter(function (e) { return S.t - e.t < (e.tx.flags.length ? 25 : 5) * MIN; });
+    S.arcs.forEach(function (e) {
+      var A = CITY[e.a].xy, B = CITY[e.b].xy, hit = e.tx.flags.length > 0, age = (S.t - e.t) / MIN;
+      var col = hit ? '255,122,107' : RAILC[e.tx.rail], fade = hit ? Math.max(.15, 1 - age / 25) : Math.max(0, 1 - age / 5);
+      if (e.a === e.b) {
+        var rr = reduce ? 8 : 3 + Math.min(age, 2) * 8;
+        g.beginPath(); g.arc(A[0], A[1], rr, 0, 6.283); g.strokeStyle = 'rgba(' + col + ',' + (fade * (hit ? .9 : .5)) + ')'; g.lineWidth = hit ? 2 : 1; g.stroke();
+        return;
+      }
+      var mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, dx = B[0] - A[0], dy = B[1] - A[1], d = Math.sqrt(dx * dx + dy * dy);
+      var cx = mx + dy / d * d * .22, cy = my - Math.abs(dx / d) * d * .22 - d * .05;
+      g.beginPath(); g.moveTo(A[0], A[1]); g.quadraticCurveTo(cx, cy, B[0], B[1]);
+      g.strokeStyle = 'rgba(' + col + ',' + (fade * (hit ? .85 : .35)) + ')'; g.lineWidth = hit ? 2 : 1; g.stroke();
+      if (!reduce && age < 1.5) {
+        var p = age / 1.5, q = 1 - p, x = q * q * A[0] + 2 * q * p * cx + p * p * B[0], y = q * q * A[1] + 2 * q * p * cy + p * p * B[1];
+        g.beginPath(); g.arc(x, y, hit ? 3.4 : 2.4, 0, 6.283); g.fillStyle = 'rgb(' + col + ')'; g.fill();
+      }
     });
-    var k = Math.sqrt(GW * GH / Math.max(nodes.length, 1)) * .55;
+    var maxV = 1; Object.keys(CITY).forEach(function (k) { maxV = Math.max(maxV, CITY[k].v); });
+    var ob = openByCity();
+    g.font = '500 11px "IBM Plex Mono",monospace';
+    Object.keys(CITY).forEach(function (k) {
+      var c = CITY[k], xy = c.xy, r = 3 + Math.sqrt(c.v / maxV) * 11, oc = ob[k];
+      if (oc) {
+        var pr = r + 7 + (reduce ? 0 : Math.sin(tnow * 3.5) * 3);
+        g.beginPath(); g.arc(xy[0], xy[1], pr, 0, 6.283); g.fillStyle = 'rgba(255,122,107,.16)'; g.fill();
+        g.strokeStyle = 'rgba(255,122,107,.7)'; g.lineWidth = 1.2; g.stroke();
+      }
+      g.beginPath(); g.arc(xy[0], xy[1], r, 0, 6.283);
+      var rg = g.createRadialGradient(xy[0], xy[1], 0, xy[0], xy[1], r); rg.addColorStop(0, '#effaf5'); rg.addColorStop(.35, oc ? '#ff7a6b' : '#5ff5bd'); rg.addColorStop(1, oc ? 'rgba(255,122,107,.35)' : 'rgba(63,191,149,.35)');
+      g.fillStyle = rg; g.fill();
+      if (hover === k) { g.lineWidth = 2; g.strokeStyle = '#fff'; g.stroke(); }
+      if (!BIG[k] && !oc && hover !== k) return;
+      if (GW < 520 && (k === 'Pretoria' || k === 'Kimberley') && !oc && hover !== k) return;
+      var L = LBL[k] || [8, 4, 'left'];
+      g.textAlign = L[2] === 'left' ? 'left' : L[2] === 'right' ? 'right' : 'center';
+      g.fillStyle = oc ? '#ffd2cc' : 'rgba(207,224,216,.8)';
+      g.fillText(k + (oc ? ' · ' + oc.length : ''), xy[0] + L[0] + (L[2] === 'left' ? r : L[2] === 'right' ? -r : 0), xy[1] + L[1]);
+    });
+  }
+  /* case links: only accounts in open cases, so rings stand out */
+  function stepGraph(nodes, edges) {
+    var cx = GW / 2, cy = GH / 2, i, j, a, b, k = Math.min(70, Math.sqrt(GW * GH / Math.max(nodes.length, 1)) * .6);
+    nodes.forEach(function (n) { if (!n.placed) { var an = Math.random() * 6.283, rr = Math.min(GW, GH) * rnd(.1, .35); n.x = cx + Math.cos(an) * rr; n.y = cy + Math.sin(an) * rr; n.vx = n.vy = 0; n.placed = true; } });
     for (i = 0; i < nodes.length; i++) for (j = i + 1; j < nodes.length; j++) {
-      a = nodes[i]; b = nodes[j];
-      var dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy + .01, f = k * k / d2 * .06;
-      if (d2 > 40000) continue;
+      a = nodes[i]; b = nodes[j]; var dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy + .01, f = Math.min(k * k / d2 * .012, .5);
       a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f;
     }
     edges.forEach(function (e) {
-      a = S.byId[e.from]; b = S.byId[e.to]; if (!a.placed || !b.placed) return;
-      var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) + .01, f = (d - k) * .004;
-      a.vx += dx / d * f * d * .02; a.vy += dy / d * f * d * .02; b.vx -= dx / d * f * d * .02; b.vy -= dy / d * f * d * .02;
+      a = S.byId[e.from]; b = S.byId[e.to]; var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) + .01, f = (d - k) * .03;
+      a.vx += dx / d * f; a.vy += dy / d * f; b.vx -= dx / d * f; b.vy -= dy / d * f;
     });
     nodes.forEach(function (n) {
-      n.vx += (cx - n.x) * .0009; n.vy += (cy - n.y) * .0012;
-      n.vx *= .82; n.vy *= .82;
-      n.x += Math.max(-4, Math.min(4, n.vx)); n.y += Math.max(-4, Math.min(4, n.vy));
-      n.x = Math.max(12, Math.min(GW - 12, n.x)); n.y = Math.max(12, Math.min(GH - 12, n.y));
+      n.vx += (cx - n.x) * .01; n.vy += (cy - n.y) * .012; n.vx *= .8; n.vy *= .8;
+      n.x += Math.max(-5, Math.min(5, n.vx)); n.y += Math.max(-5, Math.min(5, n.vy));
+      n.x = Math.max(16, Math.min(GW - 16, n.x)); n.y = Math.max(26, Math.min(GH - 16, n.y));
     });
   }
-  function drawGraph() {
-    if (!GW) size();
-    var lo = S.t - 45 * MIN;
-    S.edges = S.edges.filter(function (e) { return e.t >= lo - 30 * MIN || (e.hot && openCaseFor(e.from)); });
-    var edges = S.edges.filter(function (e) { return e.t >= lo || e.hot; }), nodes = activeNodes();
-    stepGraph(nodes, edges);
+  function drawNet() {
     g.clearRect(0, 0, GW, GH);
-    edges.forEach(function (e) {
-      var a = S.byId[e.from], b = S.byId[e.to]; if (!a.placed || !b.placed) return;
-      var age = Math.max(0, Math.min(1, (S.t - e.t) / (45 * MIN)));
-      g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y);
-      if (e.hot) { g.strokeStyle = 'rgba(240,180,41,' + (.95 - age * .4) + ')'; g.lineWidth = 2.2; }
-      else if (e.tx.flags.length) { g.strokeStyle = 'rgba(255,122,107,' + (.8 - age * .5) + ')'; g.lineWidth = 1.6; }
-      else { g.strokeStyle = 'rgba(95,245,189,' + (.32 - age * .26) + ')'; g.lineWidth = 1; }
-      g.stroke();
-      if (S.t - e.t < 1.2 * MIN && !reduce) {
-        var p = (S.t - e.t) / (1.2 * MIN);
-        g.beginPath(); g.arc(a.x + (b.x - a.x) * p, a.y + (b.y - a.y) * p, 2.4, 0, 6.283); g.fillStyle = e.hot ? '#f0b429' : '#5ff5bd'; g.fill();
-      }
-    });
-    var tnow = performance.now() / 1000;
-    nodes.forEach(function (n) {
-      var deg = n.inn.length + n.out.length, r = 3 + Math.min(6, Math.sqrt(deg) * .7), oc = openCaseFor(n.id);
-      if (oc) {
-        g.beginPath(); g.arc(n.x, n.y, r + 5 + (reduce ? 0 : Math.sin(tnow * 4) * 2), 0, 6.283);
-        g.fillStyle = 'rgba(255,122,107,.22)'; g.fill();
-      }
-      g.beginPath(); g.arc(n.x, n.y, r, 0, 6.283);
-      g.fillStyle = oc ? '#ff7a6b' : COL[n.kind]; g.globalAlpha = Math.max(.35, 1 - (S.t - n.seen) / (60 * MIN)); g.fill(); g.globalAlpha = 1;
-      if (hover === n) { g.lineWidth = 2; g.strokeStyle = '#fff'; g.stroke(); }
-    });
+    var open = S.cases.filter(function (c) { return c.status === 'open'; }), seen = {}, edges = [], subj = {};
+    open.forEach(function (c) { subj[c.acct] = c; c.txs.forEach(function (x) { if (!seen[x.id]) { seen[x.id] = 1; edges.push({ from: x.from, to: x.to, tx: x, rule: c.rule }); } }); });
+    var ids = {}; edges.forEach(function (e) { ids[e.from] = ids[e.to] = 1; });
+    var nodes = Object.keys(ids).map(function (id) { return S.byId[id]; }).filter(Boolean);
     S._nodes = nodes;
+    if (!nodes.length) { g.fillStyle = 'rgba(164,189,178,.8)'; g.font = '500 13px "IBM Plex Mono",monospace'; g.textAlign = 'center'; g.fillText('No open cases. Inject a fraud ring to see one form.', GW / 2, GH / 2); return; }
+    stepGraph(nodes, edges);
+    edges.forEach(function (e) {
+      var a = S.byId[e.from], b = S.byId[e.to], ring = e.rule === 'cycle' || e.rule === 'fanin';
+      var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) + .01, ux = dx / d, uy = dy / d, ex = b.x - ux * 9, ey = b.y - uy * 9;
+      g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(ex, ey); g.strokeStyle = ring ? 'rgba(240,180,41,.85)' : 'rgba(255,122,107,.7)'; g.lineWidth = 1.6; g.stroke();
+      g.beginPath(); g.moveTo(ex, ey); g.lineTo(ex - ux * 7 - uy * 4, ey - uy * 7 + ux * 4); g.lineTo(ex - ux * 7 + uy * 4, ey - uy * 7 - ux * 4); g.closePath(); g.fillStyle = g.strokeStyle; g.fill();
+    });
+    g.font = '500 10.5px "IBM Plex Mono",monospace'; g.textAlign = 'center';
+    nodes.forEach(function (n) {
+      var s = subj[n.id], r = s ? 8 : 5;
+      g.beginPath(); g.arc(n.x, n.y, r, 0, 6.283); g.fillStyle = s ? '#ff7a6b' : COL[n.kind]; g.fill();
+      if (hover === n) { g.lineWidth = 2; g.strokeStyle = '#fff'; g.stroke(); }
+      if (s) { g.fillStyle = '#ffd2cc'; g.fillText(s.id, n.x, n.y - 13); }
+    });
   }
+  function drawGraph() { if (!GW || !P) size(); if (view === 'map') drawMap(); else drawNet(); }
+  function cityAt(x, y) { var best = null, bd = 22 * 22; Object.keys(CITY).forEach(function (k) { var p = CITY[k].xy, d = (p[0] - x) * (p[0] - x) + (p[1] - y) * (p[1] - y); if (d < bd) { bd = d; best = k; } }); return best; }
   function nodeAt(x, y) { var best = null, bd = 196; (S._nodes || []).forEach(function (n) { var d = (n.x - x) * (n.x - x) + (n.y - y) * (n.y - y); if (d < bd) { bd = d; best = n; } }); return best; }
   var tip = $('tip');
+  function pickCase(list) { var ord = { high: 0, med: 1, low: 2 }; return list.slice().sort(function (a, b) { return ord[a.sev] - ord[b.sev] || b.updated - a.updated; })[0]; }
   cv.addEventListener('mousemove', function (e) {
-    var r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, n = nodeAt(x, y);
-    hover = n;
-    if (!n) { tip.style.display = 'none'; cv.style.cursor = 'crosshair'; return; }
-    var oc = openCaseFor(n.id);
-    tip.innerHTML = '<b>' + esc(n.label) + '</b><br>' + n.kind + ' · ' + esc(n.city) + '<br>' + n.out.length + ' out · ' + n.inn.length + ' in' + (oc ? '<br><span style="color:#ff7a6b">Open case ' + oc.id + ' · click to open</span>' : '');
-    tip.style.display = 'block';
+    var r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, html = '', clickable = false;
+    if (view === 'map') {
+      var k = cityAt(x, y); hover = k;
+      if (k) {
+        var lo = S.t - 5 * MIN, n = 0, v = 0;
+        S.arcs.forEach(function (a) { if (a.t >= lo && (a.a === k || a.b === k)) { n++; v += a.tx.amt; } });
+        var oc = openByCity()[k] || [];
+        html = '<b>' + esc(k) + '</b><br>' + n + ' payments in or out, last 5 min<br>' + R(v) + ' moved' + (oc.length ? '<br><span style="color:#ff7a6b">' + oc.length + ' open case' + (oc.length > 1 ? 's' : '') + ' · click to open</span>' : '');
+        clickable = !!oc.length;
+      }
+    } else {
+      var nd = nodeAt(x, y); hover = nd;
+      if (nd) { var oc2 = openCaseFor(nd.id); html = '<b>' + esc(nd.label) + '</b><br>' + nd.kind + ' · ' + esc(nd.city) + (oc2 ? '<br><span style="color:#ff7a6b">' + oc2.id + ' · click to open</span>' : ''); clickable = !!oc2; }
+    }
+    if (!html) { tip.style.display = 'none'; cv.style.cursor = 'default'; return; }
+    tip.innerHTML = html; tip.style.display = 'block';
     tip.style.left = Math.min(x + 14, GW - 250) + 'px'; tip.style.top = Math.min(y + 14, GH - 90) + 'px';
-    cv.style.cursor = oc ? 'pointer' : 'crosshair';
+    cv.style.cursor = clickable ? 'pointer' : 'default';
   });
   cv.addEventListener('mouseleave', function () { hover = null; tip.style.display = 'none'; });
   cv.addEventListener('click', function (e) {
-    var r = cv.getBoundingClientRect(), n = nodeAt(e.clientX - r.left, e.clientY - r.top);
-    if (!n) return;
-    var oc = openCaseFor(n.id); if (!oc) return;
-    S.sel = oc; S.qf = 'open';
-    document.querySelectorAll('[data-q]').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.q === 'open'); });
+    var r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, c = null;
+    if (view === 'map') { var k = cityAt(x, y), l = k && openByCity()[k]; if (l) c = pickCase(l); }
+    else { var n = nodeAt(x, y); if (n) c = openCaseFor(n.id); }
+    if (!c) return;
+    S.sel = c; S.qf = 'open';
+    document.querySelectorAll('[data-q]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.q === 'open'); });
     drawQueue(); drawDetail();
     $('detail').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  });
+  var VIEWTXT = { map: ['Where the money moves', 'last 5 simulated minutes · red = a rule fired · click a pulsing city'], net: ['Case links', 'only accounts in open cases · arrows show who paid whom'] };
+  document.querySelectorAll('[data-v]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      view = b.dataset.v; hover = null; tip.style.display = 'none';
+      document.querySelectorAll('[data-v]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+      $('vT').textContent = VIEWTXT[view][0]; $('vS').textContent = VIEWTXT[view][1];
+      $('legMap').hidden = view !== 'map'; $('legNet').hidden = view === 'map';
+      cv.setAttribute('aria-label', view === 'map' ? 'Map of South Africa showing payments moving between cities' : 'Diagram of accounts linked by payments in open cases');
+    });
   });
 
   /* ---------- toast ---------- */
@@ -809,7 +909,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   $('reset').onclick = function () { start(); toast('Reset. Fresh accounts, empty queue.'); };
 
   function start() {
-    newState(); warm();
+    newState(); warm(); lastT = S.t; Object.keys(CITY).forEach(function (k) { CITY[k].v = 0; });
     Object.keys(hits).forEach(function (k) { hits[k] = 0; });
     feedEl.innerHTML = '';
     drawRules(); drawRuleHits(); drawQueue(); drawDetail(); drawScore();
